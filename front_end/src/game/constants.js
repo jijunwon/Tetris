@@ -19,7 +19,7 @@ export function getLevel(lines) {
   return Math.floor(lines / LINES_PER_LEVEL) + 1;
 }
 
-// 1줄은 200점, 여러 줄(x줄)은 (x * 200) * (x + 1)점
+// 1줄은 200점, 여러 줄(x줄)은 (x * 200) * x점
 export function getLineClearScore(lines) {
   if (lines <= 1) return lines * LINE_SCORE;
   return lines * LINE_SCORE * lines;

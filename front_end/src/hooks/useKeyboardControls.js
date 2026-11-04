@@ -21,6 +21,8 @@ const NO_REPEAT = new Set([ACTIONS.ROTATE, ACTIONS.HARD_DROP, ACTIONS.HOLD, ACTI
 export function useKeyboardControls(dispatch, status, onStart) {
   useEffect(() => {
     const handleKeyDown = (event) => {
+      if (event.target instanceof HTMLInputElement) return;
+
       if (event.code === 'Enter' && (status === STATUS.READY || status === STATUS.OVER)) {
         event.preventDefault();
         onStart();
