@@ -38,7 +38,7 @@
 - [x] JDK 설치 (현재 PC: OpenJDK 25 / Spring Boot 3.x는 17 이상 필요)
 - [x] IDE: Cursor (+ Java 확장) 또는 IntelliJ IDEA Community
 - [x] Git / GitHub 계정 (배포와 CI/CD에 사용)
-- [ ] AWS 계정 생성 → 가입 직후 Billing → Budget 알림(예: $5) 설정
+- [x] AWS 계정 생성 → 가입 직후 Billing → Budget 알림(예: $5) 설정
 
 ## 1단계: 테트리스 게임 구현 (프론트엔드) — 완료
 
