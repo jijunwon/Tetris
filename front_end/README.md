@@ -20,14 +20,16 @@ src/
 │   ├── random.js      시드 기반 난수
 │   ├── pieces.js      블록 7종, 회전, 7-bag 생성
 │   ├── board.js       충돌 판정, 고정, 줄 삭제, 드롭 위치
-│   └── game.js        상태와 리듀서 (이동·회전·드롭·홀드·일시정지·게임 오버)
+│   ├── game.js        상태와 리듀서 (이동·회전·드롭·홀드·일시정지·게임 오버)
+│   └── ranking.js     랭킹 정렬과 localStorage 저장
 ├── hooks/         # React와 게임 로직 연결
 │   ├── useTetris.js            useReducer + 루프 + 키 입력 조합
+│   ├── useRanking.js           게임 오버 시 점수를 랭킹에 기록
 │   ├── useGameLoop.js          requestAnimationFrame 기반 낙하 타이머
 │   └── useKeyboardControls.js  키 → 액션 매핑
 └── components/    # 화면 표시만 담당
     ├── Board.jsx, Cell.jsx, PiecePreview.jsx
-    └── Panel.jsx, Stats.jsx, Controls.jsx, Overlay.jsx
+    └── Panel.jsx, Score.jsx, Ranking.jsx, Controls.jsx, Overlay.jsx
 ```
 
 ## 조작

@@ -11,7 +11,7 @@ const CONTROLS = [
 
 export default function Controls() {
   return (
-    <Panel title="CONTROLS">
+    <Panel title="CONTROLS" className="panel--compact sidebar__bottom">
       <ul className="controls">
         {CONTROLS.map(([key, label]) => (
           <li key={key}>
