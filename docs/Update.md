@@ -25,3 +25,8 @@
 - GET /api/scores/top?limit=10: 점수 높은 순으로 랭킹 조회
 - H2 인메모리 DB와 H2 콘솔 설정
 
+### 회원가입 / 로그인
+- `POST /api/auth/signup`: 아이디 + 비밀번호, 비밀번호는 BCrypt로 저장
+- `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`: 세션 쿠키로 로그인 유지
+- 점수 저장은 로그인한 사용자만 가능하고, 랭킹 응답에 아이디가 포함된다
+

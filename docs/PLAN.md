@@ -8,8 +8,8 @@
 | --- | --- | --- | --- | --- |
 | 0 | 개발 환경 준비 | 진행 중 | - | - |
 | 1 | 테트리스 (프론트엔드) | 완료 | `main` | 3~7일 |
-| 2 | Spring Boot 백엔드 (랭킹 API, 회원가입/로그인) | 다음 작업 | `feature/backend-setup`, `feature/score-api` | 3~5일 (2~3단계 합산) |
-| 3 | 프론트엔드 ↔ 백엔드 연결 | 대기 | `feature/ranking-integration` | (2단계에 포함) |
+| 2 | Spring Boot 백엔드 (랭킹 API, 회원가입/로그인) | 완료 | `feature/backend-setup`, `feature/signup-login` | 3~5일 (2~3단계 합산) |
+| 3 | 프론트엔드 ↔ 백엔드 연결 | 다음 작업 | `feature/ranking-integration` | (2단계에 포함) |
 | 4 | DB를 MySQL로 전환 | 대기 | `feature/mysql-profile` | 1일 |
 | 5 | AWS EC2 배포 | 대기 | `chore/depoly-ec2` | 1~3일 |
 | 6 | CI/CD 자동 배포 (선택) | 대기 | `ci/github-actions` | 선택 |
@@ -24,12 +24,8 @@
   - 이유: 브라우저(`localStorage`)에 저장하면 비밀번호가 노출되고, 랭킹이 브라우저마다 따로 쌓인다.
 - 비밀번호는 서버에서 **BCrypt로 해시**해서 저장한다.
 - 로그인해야 게임을 할 수 있고, 랭킹에는 닉네임 대신 **로그인한 아이디**가 표시된다.
+- 로그인은 **세션(쿠키)** 으로 유지한다. 3단계에서 프론트를 Spring Boot와 같은 주소에서 서빙하면 쿠키가 그대로 전달된다.
 - 현재 랭킹(등수 · 닉네임 · 점수)은 임시로 `localStorage`에 저장 중이며, 3단계에서 서버 API로 교체한다.
-
-## 아직 정하지 않은 것
-
-- 로그인 유지 방식: 세션(쿠키) vs JWT
-  - 프론트를 Spring Boot가 같은 주소에서 서빙하면 세션 방식이 더 간단하다.
 
 ---
 
@@ -61,7 +57,7 @@
 - [x] start.spring.io에서 생성 → `back_end/`에 배치
   - Project: Gradle / Language: Java / Spring Boot: 3.x
   - Dependencies: Spring Web, Spring Data JPA, H2 Database, MySQL Driver, Lombok, Validation (+ 회원가입용 Spring Security)
-- [ ] 개발 중에는 H2 인메모리 DB 사용 (설치 불필요)
+- [x] 개발 중에는 H2 인메모리 DB 사용 (설치 불필요)
 
 권장 폴더 구조:
 
@@ -79,14 +75,14 @@ src/main/resources/
 
 ### 2-2. 랭킹 API
 
-- [ ] `POST /api/scores`: 게임이 끝나면 점수 저장
-- [ ] `GET /api/scores/top?limit=10`: 상위 랭킹 조회
+- [x] `POST /api/scores`: 게임이 끝나면 점수 저장
+- [x] `GET /api/scores/top?limit=10`: 상위 랭킹 조회
 
 ### 2-3. 회원가입 / 로그인 API
 
-- [ ] 회원가입: 아이디 + 비밀번호, 비밀번호는 BCrypt 해시로 저장
-- [ ] 로그인 / 로그아웃
-- [ ] 점수 저장은 로그인한 사용자만 가능, 점수에 사용자 연결
+- [x] 회원가입: 아이디 + 비밀번호, 비밀번호는 BCrypt 해시로 저장
+- [x] 로그인 / 로그아웃
+- [x] 점수 저장은 로그인한 사용자만 가능, 점수에 사용자 연결
 
 확장 아이디어 (배포까지 한 번 성공한 뒤에): 개인 최고 기록, WebSocket 실시간 대전.
 

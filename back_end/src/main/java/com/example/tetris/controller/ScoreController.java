@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +25,8 @@ public class ScoreController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ScoreResponse save(@Valid @RequestBody ScoreRequest request) {
-        return scoreService.save(request);
+    public ScoreResponse save(@Valid @RequestBody ScoreRequest request, Authentication authentication) {
+        return scoreService.save(request, authentication.getName());
     }
 
     @GetMapping("/top")

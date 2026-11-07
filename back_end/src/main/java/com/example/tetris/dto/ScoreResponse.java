@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record ScoreResponse(
         Long id,
+        String username,
         int score,
         int clearedLines,
         LocalDateTime createdAt
@@ -12,6 +13,7 @@ public record ScoreResponse(
     public static ScoreResponse from(Score score) {
         return new ScoreResponse(
                 score.getId(),
+                score.getUser().getUsername(),
                 score.getScore(),
                 score.getClearedLines(),
                 score.getCreatedAt()
