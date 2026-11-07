@@ -58,7 +58,7 @@
 
 ### 2-1. 프로젝트 생성
 
-- [ ] start.spring.io에서 생성 → `back_end/`에 배치
+- [x] start.spring.io에서 생성 → `back_end/`에 배치
   - Project: Gradle / Language: Java / Spring Boot: 3.x
   - Dependencies: Spring Web, Spring Data JPA, H2 Database, MySQL Driver, Lombok, Validation (+ 회원가입용 Spring Security)
 - [ ] 개발 중에는 H2 인메모리 DB 사용 (설치 불필요)
