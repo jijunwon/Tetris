@@ -15,5 +15,13 @@
 - hello tetris
 
 
+# 2026-11-07
 
+### Spring
+- DB(H2) 연결 확인
+
+### API
+- POST /api/scores: 점수 저장 (음수 점수는 400으로 거절)
+- GET /api/scores/top?limit=10: 점수 높은 순으로 랭킹 조회
+- H2 인메모리 DB와 H2 콘솔 설정
 
