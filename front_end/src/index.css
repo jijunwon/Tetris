@@ -133,15 +133,60 @@ body {
   filter: brightness(1.1);
 }
 
-.nickname-form {
+.overlay__button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  filter: none;
+}
+
+.auth-form {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
   max-width: 220px;
 }
 
-.nickname-form__input {
-  flex: 1;
+.auth-form__error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #f87171;
+}
+
+.link-button {
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.user-bar__name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.overlay__save {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.overlay__save--failed {
+  color: #f87171;
+}
+
+.auth-form__input {
   min-width: 0;
   padding: 8px 10px;
   font: inherit;
@@ -151,26 +196,9 @@ body {
   border-radius: 6px;
 }
 
-.nickname-form__input:focus {
+.auth-form__input:focus {
   outline: none;
   border-color: var(--accent);
-}
-
-.nickname-form__button {
-  padding: 8px 12px;
-  white-space: nowrap;
-  font: inherit;
-  font-weight: 600;
-  color: var(--accent);
-  background: transparent;
-  border: 1px solid var(--accent);
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.nickname-form__button:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 
 .overlay__hint {

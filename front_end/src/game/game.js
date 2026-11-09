@@ -4,6 +4,7 @@ import { clearLines, collides, createBoard, getDropPosition, mergePiece } from '
 
 export const ACTIONS = Object.freeze({
   START: 'START',
+  RESET: 'RESET',
   TICK: 'TICK',
   MOVE_LEFT: 'MOVE_LEFT',
   MOVE_RIGHT: 'MOVE_RIGHT',
@@ -123,6 +124,8 @@ export function gameReducer(state, action) {
   switch (action.type) {
     case ACTIONS.START:
       return startGame(action.seed);
+    case ACTIONS.RESET:
+      return createInitialState(action.seed);
     case ACTIONS.TOGGLE_PAUSE:
       return togglePause(state);
     default:

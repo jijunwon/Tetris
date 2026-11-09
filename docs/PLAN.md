@@ -9,8 +9,8 @@
 | 0 | 개발 환경 준비 | 진행 중 | - | - |
 | 1 | 테트리스 (프론트엔드) | 완료 | `main` | 3~7일 |
 | 2 | Spring Boot 백엔드 (랭킹 API, 회원가입/로그인) | 완료 | `feature/backend-setup`, `feature/signup-login` | 3~5일 (2~3단계 합산) |
-| 3 | 프론트엔드 ↔ 백엔드 연결 | 다음 작업 | `feature/ranking-integration` | (2단계에 포함) |
-| 4 | DB를 MySQL로 전환 | 대기 | `feature/mysql-profile` | 1일 |
+| 3 | 프론트엔드 ↔ 백엔드 연결 | 완료 | `feature/ranking-integration` | (2단계에 포함) |
+| 4 | DB를 MySQL로 전환 | 다음 작업 | `feature/mysql-profile` | 1일 |
 | 5 | AWS EC2 배포 | 대기 | `chore/depoly-ec2` | 1~3일 |
 | 6 | CI/CD 자동 배포 (선택) | 대기 | `ci/github-actions` | 선택 |
 
@@ -24,8 +24,9 @@
   - 이유: 브라우저(`localStorage`)에 저장하면 비밀번호가 노출되고, 랭킹이 브라우저마다 따로 쌓인다.
 - 비밀번호는 서버에서 **BCrypt로 해시**해서 저장한다.
 - 로그인해야 게임을 할 수 있고, 랭킹에는 닉네임 대신 **로그인한 아이디**가 표시된다.
-- 로그인은 **세션(쿠키)** 으로 유지한다. 3단계에서 프론트를 Spring Boot와 같은 주소에서 서빙하면 쿠키가 그대로 전달된다.
-- 현재 랭킹(등수 · 닉네임 · 점수)은 임시로 `localStorage`에 저장 중이며, 3단계에서 서버 API로 교체한다.
+- 로그인은 **세션(쿠키)** 으로 유지한다. 배포할 때는 프론트를 Spring Boot가 같은 주소에서 서빙하고, 개발할 때는 Vite 프록시로 `/api`를 백엔드에 넘겨서 쿠키가 그대로 전달된다.
+- 랭킹은 서버 API로 저장·조회한다 (`localStorage` 랭킹은 제거).
+- 프론트 빌드 결과는 소스 폴더에 복사하지 않고, `bootJar`가 `front_end/dist`를 JAR 안의 `static/`에 넣는다.
 
 ---
 
@@ -88,11 +89,16 @@ src/main/resources/
 
 ## 3단계: 프론트엔드와 백엔드 연결
 
-- [ ] 프론트 빌드 결과(`front_end/dist`)를 `src/main/resources/static/`에 넣어 `http://localhost:8080`에서 게임 서빙 (같은 주소라 CORS 설정 불필요)
-- [ ] 로그인 / 회원가입 화면 추가, 로그인해야 게임 시작
-- [ ] 게임 오버 시 `fetch('/api/scores', { method: 'POST', ... })`로 점수 전송
-- [ ] 랭킹 창을 `GET /api/scores/top` 결과로 표시 (`localStorage` 랭킹, 닉네임 입력칸 제거)
-- [ ] `./gradlew build`로 `build/libs/*.jar` 생성 확인 → 이 JAR 하나가 배포 결과물
+- [x] 프론트 빌드 결과를 JAR의 `static/`에 넣어 Spring Boot 한 곳에서 게임과 API를 서빙 (같은 주소라 CORS 설정 불필요)
+- [x] 로그인 / 회원가입 화면 추가, 로그인해야 게임 시작
+- [x] 게임 오버 시 `fetch('/api/scores', { method: 'POST', ... })`로 점수 전송
+- [x] 랭킹 창을 `GET /api/scores/top` 결과로 표시 (`localStorage` 랭킹, 닉네임 입력칸 제거)
+- [x] `./gradlew build`로 `build/libs/*.jar` 생성 확인 → 이 JAR 하나가 배포 결과물
+
+실행 방법:
+
+- 개발: `back_end`에서 `.\gradlew bootRun`, `front_end`에서 `npm run dev` → `http://localhost:5173`
+- 배포용 확인: `back_end`에서 `.\gradlew build` 후 `java -jar build\libs\tetris-0.0.1-SNAPSHOT.jar` → `http://localhost:8080`
 
 ## 4단계: DB를 MySQL로 전환
 

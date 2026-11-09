@@ -32,8 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/scores/top").permitAll()
-                        .requestMatchers("/h2-console", "/h2-console/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll())
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(
                         (request, response, exception) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

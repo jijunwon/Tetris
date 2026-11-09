@@ -113,6 +113,14 @@ class AuthAndScoreApiTest {
     }
 
     @Test
+    void pagesOutsideApiDoNotRequireLogin() throws Exception {
+        mockMvc.perform(get("/index.html"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isNotEqualTo(401));
+        mockMvc.perform(get("/api/auth/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void blankSignupIsBadRequest() throws Exception {
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)

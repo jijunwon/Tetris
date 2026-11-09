@@ -20,6 +20,16 @@ describe('gameReducer', () => {
     expect(state.queue.length).toBeGreaterThanOrEqual(7);
   });
 
+  it('RESET하면 진행 중이던 게임이 시작 전 상태로 돌아간다', () => {
+    const playing = gameReducer(startedState(), { type: ACTIONS.HARD_DROP });
+    const reset = gameReducer(playing, { type: ACTIONS.RESET, seed: 2 });
+
+    expect(reset.status).toBe(STATUS.READY);
+    expect(reset.current).toBeNull();
+    expect(reset.score).toBe(0);
+    expect(reset.board).toEqual(createBoard());
+  });
+
   it('진행 중이 아니면 입력을 무시한다', () => {
     const ready = createInitialState(1);
     expect(gameReducer(ready, { type: ACTIONS.MOVE_LEFT })).toBe(ready);

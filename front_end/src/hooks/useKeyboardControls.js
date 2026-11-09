@@ -18,8 +18,10 @@ const KEY_ACTIONS = {
 // 키를 누르고 있을 때 반복 입력되면 안 되는 동작
 const NO_REPEAT = new Set([ACTIONS.ROTATE, ACTIONS.HARD_DROP, ACTIONS.HOLD, ACTIONS.TOGGLE_PAUSE]);
 
-export function useKeyboardControls(dispatch, status, onStart) {
+export function useKeyboardControls(dispatch, status, onStart, enabled = true) {
   useEffect(() => {
+    if (!enabled) return undefined;
+
     const handleKeyDown = (event) => {
       if (event.target instanceof HTMLInputElement) return;
 
@@ -39,5 +41,5 @@ export function useKeyboardControls(dispatch, status, onStart) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dispatch, status, onStart]);
+  }, [dispatch, status, onStart, enabled]);
 }

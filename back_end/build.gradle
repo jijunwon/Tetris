@@ -38,3 +38,32 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+def frontendDir = file('../front_end')
+def npm = System.getProperty('os.name').toLowerCase().contains('windows') ? 'npm.cmd' : 'npm'
+
+tasks.register('npmInstall', Exec) {
+	workingDir = frontendDir
+	commandLine npm, 'install'
+	onlyIf { !new File(frontendDir, 'node_modules').exists() }
+}
+
+tasks.register('buildFrontend', Exec) {
+	dependsOn 'npmInstall'
+	workingDir = frontendDir
+	commandLine npm, 'run', 'build'
+	inputs.dir(new File(frontendDir, 'src'))
+	inputs.files(
+			new File(frontendDir, 'index.html'),
+			new File(frontendDir, 'vite.config.js'),
+			new File(frontendDir, 'package.json'),
+			new File(frontendDir, 'package-lock.json'))
+	outputs.dir(new File(frontendDir, 'dist'))
+}
+
+tasks.named('bootJar') {
+	dependsOn 'buildFrontend'
+	from(new File(frontendDir, 'dist')) {
+		into 'BOOT-INF/classes/static'
+	}
+}
