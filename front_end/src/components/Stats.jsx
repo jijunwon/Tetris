@@ -8,8 +8,8 @@ function formatTime(ms) {
   return `${minutes}:${seconds}`;
 }
 
-export default function Stats({ level, lines, status }) {
-  const elapsed = useElapsedTime(status);
+export default function Stats({ level, lines, status, gameId }) {
+  const elapsed = useElapsedTime(status, gameId);
 
   const stats = [
     ['LEVEL', level],

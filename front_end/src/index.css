@@ -134,6 +134,8 @@ body {
   position: absolute;
   top: 50%;
   right: 5px;
+  display: flex;
+  gap: 4px;
   transform: translateY(-50%);
 }
 
@@ -387,6 +389,20 @@ body {
   letter-spacing: 0.15em;
 }
 
+.overlay__title--question {
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+}
+
+.overlay__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.overlay__actions .overlay__button {
+  padding: 10px 22px;
+}
+
 /* 시작 화면의 TETRIS는 위쪽 제목과 같은 색으로 */
 .overlay__title--brand {
   color: var(--headline);
@@ -417,6 +433,13 @@ body {
   opacity: 0.4;
   cursor: default;
   filter: none;
+}
+
+/* .overlay__button보다 뒤에 있어야 배경·글자색을 덮어쓴다 */
+.overlay__button--secondary {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 .auth-form {
@@ -492,6 +515,13 @@ body {
 .icon-button[aria-expanded='true'] {
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+.icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+  background: none;
+  color: var(--text-muted);
 }
 
 .icon-button--danger:hover,

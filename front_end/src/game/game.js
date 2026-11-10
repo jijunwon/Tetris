@@ -44,6 +44,8 @@ function refillQueue(queue, seed) {
 export function createInitialState(seed) {
   const { queue, seed: nextSeed } = refillQueue([], seed);
   return {
+    // 판마다 달라지고 게임 중에는 바뀌지 않는다. 타이머가 새 판을 알아보는 데 쓴다.
+    gameId: seed,
     status: STATUS.READY,
     board: createBoard(),
     current: null,

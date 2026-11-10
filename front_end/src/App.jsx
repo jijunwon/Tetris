@@ -1,9 +1,10 @@
+import { useCallback, useRef, useState } from 'react';
 import { useAuth } from './hooks/useAuth.js';
 import { useTetris } from './hooks/useTetris.js';
 import { useRanking } from './hooks/useRanking.js';
 import { useBoardShake } from './hooks/useBoardShake.js';
 import { useTheme } from './hooks/useTheme.js';
-import { NEXT_PREVIEW_COUNT } from './game/constants.js';
+import { NEXT_PREVIEW_COUNT, STATUS } from './game/constants.js';
 import AuthForm from './components/AuthForm.jsx';
 import Board from './components/Board.jsx';
 import ClearPopup from './components/ClearPopup.jsx';
@@ -12,6 +13,8 @@ import Overlay from './components/Overlay.jsx';
 import Panel from './components/Panel.jsx';
 import PiecePreview from './components/PiecePreview.jsx';
 import Ranking from './components/Ranking.jsx';
+import RestartButton from './components/RestartButton.jsx';
+import RestartConfirm from './components/RestartConfirm.jsx';
 import Score from './components/Score.jsx';
 import Stats from './components/Stats.jsx';
 import ThemeMenu from './components/ThemeMenu.jsx';
@@ -20,7 +23,12 @@ import UserBar from './components/UserBar.jsx';
 export default function App() {
   const auth = useAuth();
   const [theme, setTheme] = useTheme();
-  const { state, start, reset, togglePause } = useTetris(Boolean(auth.user));
+  const [confirmingRestart, setConfirmingRestart] = useState(false);
+  // 확인 창을 띄우면서 게임을 멈췄는지. '아니오'를 누르면 이때만 다시 진행한다.
+  const pausedForConfirm = useRef(false);
+  const { state, start, reset, togglePause } = useTetris(
+    Boolean(auth.user) && !confirmingRestart,
+  );
   const { ranking, rankingFailed, latestId, saveStatus } = useRanking(
     state.status,
     state.score,
@@ -28,7 +36,29 @@ export default function App() {
   );
   const boardRef = useBoardShake(state.hardDropCount, state.lastClear);
 
+  const openRestartConfirm = () => {
+    if (state.status === STATUS.PLAYING) {
+      togglePause();
+      pausedForConfirm.current = true;
+    }
+    setConfirmingRestart(true);
+  };
+
+  const confirmRestart = useCallback(() => {
+    pausedForConfirm.current = false;
+    setConfirmingRestart(false);
+    start();
+  }, [start]);
+
+  const cancelRestart = useCallback(() => {
+    if (pausedForConfirm.current) togglePause();
+    pausedForConfirm.current = false;
+    setConfirmingRestart(false);
+  }, [togglePause]);
+
   const handleLogout = () => {
+    pausedForConfirm.current = false;
+    setConfirmingRestart(false);
     reset();
     auth.logout();
   };
@@ -42,6 +72,14 @@ export default function App() {
     );
   } else if (!auth.user) {
     boardOverlay = <AuthForm onLogin={auth.login} onSignup={auth.signup} />;
+  } else if (confirmingRestart) {
+    boardOverlay = (
+      <RestartConfirm
+        showLossWarning={state.status !== STATUS.OVER}
+        onConfirm={confirmRestart}
+        onCancel={cancelRestart}
+      />
+    );
   } else {
     boardOverlay = (
       <Overlay
@@ -59,6 +97,10 @@ export default function App() {
       <header className="app__header">
         <h1 className="app__title">TETRIS</h1>
         <div className="app__settings">
+          <RestartButton
+            disabled={!auth.user || state.status === STATUS.READY || confirmingRestart}
+            onClick={openRestartConfirm}
+          />
           <ThemeMenu theme={theme} onChange={setTheme} />
         </div>
       </header>
@@ -70,7 +112,12 @@ export default function App() {
           <Panel title="HOLD">
             <PiecePreview type={state.hold} dimmed={!state.canHold} />
           </Panel>
-          <Stats level={state.level} lines={state.lines} status={state.status} />
+          <Stats
+            level={state.level}
+            lines={state.lines}
+            status={state.status}
+            gameId={state.gameId}
+          />
           <Ranking ranking={ranking} failed={rankingFailed} latestId={latestId} />
         </aside>
 
