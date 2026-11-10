@@ -1,6 +1,6 @@
 import { PIECES, PIECE_TYPES } from '../game/pieces.js';
 
-// 아이디마다 항상 같은 블록 색이 나오도록 문자열 해시로 고른다.
+// 아이디마다 항상 같은 블록 색이 나오도록 문자열 해시로 고른다. 닉네임은 겹칠 수 있어서 아이디를 쓴다.
 function getAvatarColor(username) {
   let hash = 0;
   for (const char of username) {
@@ -9,7 +9,9 @@ function getAvatarColor(username) {
   return PIECES[PIECE_TYPES[hash % PIECE_TYPES.length]].color;
 }
 
-export default function UserBar({ username, onLogout }) {
+export default function UserBar({ nickname, username, onLogout }) {
+  const displayName = nickname ?? username;
+
   return (
     <div className="user-bar">
       <span
@@ -17,12 +19,12 @@ export default function UserBar({ username, onLogout }) {
         style={{ '--cell-color': getAvatarColor(username) }}
         aria-hidden="true"
       >
-        {username.charAt(0).toUpperCase()}
+        {[...displayName][0].toUpperCase()}
       </span>
       <div className="user-bar__info">
         <span className="user-bar__label">PLAYER</span>
-        <span className="user-bar__name" title={username}>
-          {username}
+        <span className="user-bar__name" title={`${displayName} (${username})`}>
+          {displayName}
         </span>
       </div>
       <button

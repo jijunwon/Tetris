@@ -26,8 +26,8 @@ async function request(path, { method = 'GET', body } = {}) {
   return data;
 }
 
-export function signup(username, password) {
-  return request('/api/auth/signup', { method: 'POST', body: { username, password } });
+export function signup(nickname, username, password) {
+  return request('/api/auth/signup', { method: 'POST', body: { nickname, username, password } });
 }
 
 export function login(username, password) {

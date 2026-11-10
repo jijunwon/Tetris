@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,26 +40,21 @@ class AuthAndScoreApiTest {
 
     @Test
     void signupStoresBcryptPasswordAndRejectsDuplicateUsername() throws Exception {
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(credentials("player", "secret")))
+        signup("테트리스왕", "player", "secret")
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("player"))
+                .andExpect(jsonPath("$.nickname").value("테트리스왕"))
                 .andExpect(jsonPath("$.password").doesNotExist());
 
         assertThat(userRepository.findByUsername("player").orElseThrow().getPassword()).startsWith("$2");
 
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(credentials("player", "secret")))
+        signup("다른닉네임", "player", "secret")
                 .andExpect(status().isConflict());
     }
 
     @Test
-    void loginThenSaveScoreRequiresSessionAndShowsUsername() throws Exception {
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(credentials("player", "secret")))
+    void loginThenSaveScoreRequiresSessionAndShowsNickname() throws Exception {
+        signup("테트리스왕", "player", "secret")
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/scores")
@@ -71,6 +67,7 @@ class AuthAndScoreApiTest {
                         .content(credentials("player", "secret")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("player"))
+                .andExpect(jsonPath("$.nickname").value("테트리스왕"))
                 .andReturn();
         MockHttpSession session = (MockHttpSession) login.getRequest().getSession(false);
         assertThat(session).isNotNull();
@@ -85,12 +82,12 @@ class AuthAndScoreApiTest {
 
         mockMvc.perform(get("/api/scores/top"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].username").value("player"))
+                .andExpect(jsonPath("$[0].nickname").value("테트리스왕"))
                 .andExpect(jsonPath("$[0].score").value(1200));
 
         mockMvc.perform(get("/api/auth/me").session(session))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("player"));
+                .andExpect(jsonPath("$.nickname").value("테트리스왕"));
 
         mockMvc.perform(post("/api/auth/logout").session(session))
                 .andExpect(status().isNoContent());
@@ -101,9 +98,7 @@ class AuthAndScoreApiTest {
 
     @Test
     void loginWithWrongPasswordIsUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(credentials("player", "secret")))
+        signup("테트리스왕", "player", "secret")
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/auth/login")
@@ -122,10 +117,22 @@ class AuthAndScoreApiTest {
 
     @Test
     void blankSignupIsBadRequest() throws Exception {
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(credentials(" ", "secret")))
+        signup("테트리스왕", " ", "secret")
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void signupWithoutNicknameIsBadRequest() throws Exception {
+        signup(" ", "player", "secret")
+                .andExpect(status().isBadRequest());
+    }
+
+    private ResultActions signup(String nickname, String username, String password) throws Exception {
+        String body = "{\"nickname\":\"" + nickname + "\",\"username\":\"" + username
+                + "\",\"password\":\"" + password + "\"}";
+        return mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body));
     }
 
     private String credentials(String username, String password) {

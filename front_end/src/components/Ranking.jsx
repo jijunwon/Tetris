@@ -15,7 +15,7 @@ export default function Ranking({ ranking, failed, latestId }) {
             className={entry.id === latestId ? 'ranking__item ranking__item--latest' : 'ranking__item'}
           >
             <span className="ranking__rank">{index + 1}</span>
-            <span className="ranking__name">{entry.username}</span>
+            <span className="ranking__name">{entry.nickname ?? entry.username}</span>
             <span className="ranking__score">{entry.score.toLocaleString()}</span>
           </li>
         ))}

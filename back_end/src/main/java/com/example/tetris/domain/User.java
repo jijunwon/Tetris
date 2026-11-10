@@ -27,11 +27,20 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    // 닉네임 칸이 생기기 전에 가입한 계정은 null이라 nullable로 둔다.
+    @Column(length = 12)
+    private String nickname;
+
     private LocalDateTime createdAt;
 
-    public User(String username, String password) {
+    public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public String getDisplayName() {
+        return nickname != null ? nickname : username;
     }
 }

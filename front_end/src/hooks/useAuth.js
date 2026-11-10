@@ -25,8 +25,8 @@ export function useAuth() {
   }, []);
 
   // 회원가입만으로는 세션이 생기지 않으므로 바로 로그인까지 한다
-  const signup = useCallback(async (username, password) => {
-    await api.signup(username, password);
+  const signup = useCallback(async (nickname, username, password) => {
+    await api.signup(nickname, username, password);
     setUser(await api.login(username, password));
   }, []);
 

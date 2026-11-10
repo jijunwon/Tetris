@@ -79,7 +79,13 @@ export default function App() {
 
         <aside className="sidebar">
           <div className="sidebar__header">
-            {auth.user && <UserBar username={auth.user.username} onLogout={handleLogout} />}
+            {auth.user && (
+              <UserBar
+                nickname={auth.user.nickname}
+                username={auth.user.username}
+                onLogout={handleLogout}
+              />
+            )}
           </div>
           <Panel title="NEXT">
             {state.queue.slice(0, NEXT_PREVIEW_COUNT).map((type, index) => (

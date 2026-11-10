@@ -33,7 +33,10 @@ public class AuthService {
         if (userRepository.existsByUsername(request.username())) {
             throw new DuplicateUsernameException("이미 사용 중인 아이디입니다.");
         }
-        User user = userRepository.save(new User(request.username(), passwordEncoder.encode(request.password())));
+        User user = userRepository.save(new User(
+                request.username(),
+                passwordEncoder.encode(request.password()),
+                request.nickname().strip()));
         return UserResponse.from(user);
     }
 
