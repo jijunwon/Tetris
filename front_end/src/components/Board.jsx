@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { COLS, ROWS } from '../game/constants.js';
 import { getDropPosition } from '../game/board.js';
-import { PIECES, getPieceCells } from '../game/pieces.js';
+import { getCellColor, getPieceCells } from '../game/pieces.js';
 import { useSoftDropTrail } from '../hooks/useSoftDropTrail.js';
 import Cell from './Cell.jsx';
 
@@ -31,7 +31,7 @@ export default function Board({ board, current, lastClear, softDropCount }) {
         <div
           key={item.id}
           className="board__trail"
-          style={{ '--cell-color': PIECES[item.type].color }}
+          style={{ '--cell-color': getCellColor(item.type) }}
           onAnimationEnd={() => remove(item.id)}
         >
           {item.cells.map(({ x, y }) => (

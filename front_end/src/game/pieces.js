@@ -3,7 +3,6 @@ import { nextRandom } from './random.js';
 
 export const PIECES = {
   I: {
-    color: '#22d3ee',
     shape: [
       [0, 0, 0, 0],
       [1, 1, 1, 1],
@@ -12,14 +11,12 @@ export const PIECES = {
     ],
   },
   O: {
-    color: '#facc15',
     shape: [
       [1, 1],
       [1, 1],
     ],
   },
   T: {
-    color: '#a855f7',
     shape: [
       [0, 1, 0],
       [1, 1, 1],
@@ -27,7 +24,6 @@ export const PIECES = {
     ],
   },
   S: {
-    color: '#22c55e',
     shape: [
       [0, 1, 1],
       [1, 1, 0],
@@ -35,7 +31,6 @@ export const PIECES = {
     ],
   },
   Z: {
-    color: '#ef4444',
     shape: [
       [1, 1, 0],
       [0, 1, 1],
@@ -43,7 +38,6 @@ export const PIECES = {
     ],
   },
   J: {
-    color: '#3b82f6',
     shape: [
       [1, 0, 0],
       [1, 1, 1],
@@ -51,7 +45,6 @@ export const PIECES = {
     ],
   },
   L: {
-    color: '#f97316',
     shape: [
       [0, 0, 1],
       [1, 1, 1],
@@ -64,10 +57,10 @@ export const PIECE_TYPES = Object.keys(PIECES);
 
 // 레벨이 오를 때 밑에서 올라오는 방해 줄의 칸. 7-bag에 들어가지 않도록 PIECES와 따로 둔다.
 export const GARBAGE = 'G';
-const GARBAGE_COLOR = '#6b7280';
 
+// 블록 색은 테마마다 달라서 index.css의 --piece-I, --piece-G 같은 변수로 정의한다.
 export function getCellColor(type) {
-  return type === GARBAGE ? GARBAGE_COLOR : PIECES[type].color;
+  return `var(--piece-${type})`;
 }
 
 export function createPiece(type) {

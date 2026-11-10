@@ -11,6 +11,14 @@
   --accent-soft: rgb(56 189 248 / 0.12);
   --cell-empty: #0b1120;
   --overlay-bg: rgb(15 23 42 / 0.82);
+  --piece-I: #22d3ee;
+  --piece-O: #facc15;
+  --piece-T: #a855f7;
+  --piece-S: #22c55e;
+  --piece-Z: #ef4444;
+  --piece-J: #3b82f6;
+  --piece-L: #f97316;
+  --piece-G: #6b7280;
 
   font-family: 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
   color: var(--text);
@@ -29,6 +37,21 @@
   --accent-soft: rgb(2 132 199 / 0.1);
   --cell-empty: #f1f5f9;
   --overlay-bg: rgb(241 245 249 / 0.85);
+  /* 밝은 배경에서 눈부시지 않게 같은 색상 계열을 채도는 낮추고 조금 더 깊게 */
+  --piece-I: #4fb3c8;
+  --piece-O: #ddb64c;
+  --piece-T: #9a7bcf;
+  --piece-S: #5fb37a;
+  --piece-Z: #d9706f;
+  --piece-J: #5f86cf;
+  --piece-L: #df8f55;
+  --piece-G: #9aa3af;
+}
+
+:root[data-theme='light'] .cell--filled {
+  box-shadow:
+    inset 3px 3px 0 rgb(255 255 255 / 0.35),
+    inset -3px -3px 0 rgb(0 0 0 / 0.15);
 }
 
 :root[data-theme='neon'] {
