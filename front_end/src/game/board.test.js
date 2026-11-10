@@ -23,7 +23,7 @@ describe('collides', () => {
   it('쌓인 블록과 겹치면 충돌한다', () => {
     const board = createBoard();
     const piece = createPiece('O');
-    board[1][piece.x] = 'Z';
+    board[0][piece.x] = 'Z';
     expect(collides(board, piece)).toBe(true);
   });
 
@@ -35,7 +35,7 @@ describe('collides', () => {
 describe('mergePiece', () => {
   it('원본 보드를 바꾸지 않고 새 보드를 반환한다', () => {
     const board = createBoard();
-    const merged = mergePiece(board, createPiece('O'));
+    const merged = mergePiece(board, { ...createPiece('O'), y: 0 });
     expect(board.flat().every((cell) => cell === null)).toBe(true);
     expect(merged.flat().filter((cell) => cell === 'O')).toHaveLength(4);
   });

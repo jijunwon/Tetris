@@ -63,13 +63,16 @@ export function getCellColor(type) {
   return `var(--piece-${type})`;
 }
 
+// 블록의 맨 아랫줄만 보드 첫 줄(y = 0)에 걸치고 나머지는 보드 위에서 생겨서,
+// 내려오면서 아랫줄부터 차례로 보이게 한다.
 export function createPiece(type) {
   const { shape } = PIECES[type];
+  const bottomRow = shape.findLastIndex((row) => row.some(Boolean));
   return {
     type,
     shape,
     x: Math.floor((COLS - shape[0].length) / 2),
-    y: 0,
+    y: -bottomRow,
   };
 }
 

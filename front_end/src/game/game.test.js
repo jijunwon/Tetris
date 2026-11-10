@@ -146,15 +146,33 @@ describe('gameReducer', () => {
     expect(gameReducer(held, { type: ACTIONS.HOLD })).toBe(held);
   });
 
-  it('새 블록이 생성 위치에서 충돌하면 게임 오버', () => {
+  it('다음 블록이 나올 자리(보드 첫 줄 가운데)가 막혀 있으면 게임 오버', () => {
+    const board = createBoard();
+    board[0] = board[0].map((_, x) => (x >= 3 && x <= 6 ? 'Z' : null));
+    const state = { ...startedState(), board, current: { ...createPiece('O'), x: 0 } };
+
+    const next = gameReducer(state, { type: ACTIONS.HARD_DROP });
+
+    expect(next.status).toBe(STATUS.OVER);
+  });
+
+  it('블록이 보드 위로 삐져나온 채 고정되면 게임 오버', () => {
     const board = createBoard().map((row, y) =>
-      y >= 2 ? row.map((_, x) => (x < COLS - 1 ? 'Z' : null)) : row,
+      y >= 1 ? row.map((_, x) => (x < COLS - 1 ? 'Z' : null)) : row,
     );
     const state = { ...startedState(), board, current: createPiece('T') };
 
     const next = gameReducer(state, { type: ACTIONS.TICK });
 
     expect(next.status).toBe(STATUS.OVER);
+  });
+
+  it('새 블록은 보드 위에서 생겨 한 칸씩 내려오며 들어온다', () => {
+    const state = { ...startedState(), current: createPiece('T') };
+    const next = gameReducer(state, { type: ACTIONS.TICK });
+
+    expect(state.current.y).toBe(-1);
+    expect(next.current.y).toBe(0);
   });
 
   it('일시정지 중에는 블록이 내려가지 않는다', () => {

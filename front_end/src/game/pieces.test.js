@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { PIECES, PIECE_TYPES, createBag, rotateMatrix } from './pieces.js';
+import {
+  PIECES,
+  PIECE_TYPES,
+  createBag,
+  createPiece,
+  getPieceCells,
+  rotateMatrix,
+} from './pieces.js';
+
+describe('createPiece', () => {
+  it('맨 아랫줄만 보드 첫 줄에 보이고 나머지는 보드 위에서 생긴다', () => {
+    PIECE_TYPES.forEach((type) => {
+      const rows = getPieceCells(createPiece(type)).map(({ y }) => y);
+      expect(Math.max(...rows)).toBe(0);
+    });
+  });
+});
 
 describe('rotateMatrix', () => {
   it('시계 방향으로 회전한다', () => {
