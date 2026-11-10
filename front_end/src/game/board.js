@@ -22,11 +22,21 @@ export function mergePiece(board, piece) {
   return next;
 }
 
+// rows: 지운 줄의 번호(지우기 전 보드 기준). 줄 삭제 연출에 쓴다.
 export function clearLines(board) {
-  const remaining = board.filter((row) => row.some((cell) => cell === null));
-  const cleared = ROWS - remaining.length;
+  const rows = [];
+  const remaining = board.filter((row, y) => {
+    const full = row.every((cell) => cell !== null);
+    if (full) rows.push(y);
+    return !full;
+  });
+  const cleared = rows.length;
   const emptyRows = Array.from({ length: cleared }, () => Array(COLS).fill(null));
-  return { board: [...emptyRows, ...remaining], cleared };
+  return { board: [...emptyRows, ...remaining], cleared, rows };
+}
+
+export function isBoardEmpty(board) {
+  return board.every((row) => row.every((cell) => cell === null));
 }
 
 export function getDropPosition(board, piece) {

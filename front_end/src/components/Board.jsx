@@ -17,7 +17,7 @@ function buildGrid(board, current) {
   return grid;
 }
 
-export default function Board({ board, current }) {
+export default function Board({ board, current, lastClear }) {
   const grid = useMemo(() => buildGrid(board, current), [board, current]);
 
   return (
@@ -25,6 +25,9 @@ export default function Board({ board, current }) {
       {grid.map((row, y) =>
         row.map((cell, x) => <Cell key={`${y}-${x}`} type={cell.type} ghost={cell.ghost} />),
       )}
+      {lastClear?.rows.map((y) => (
+        <div key={`${lastClear.id}-${y}`} className="board__flash" style={{ '--row': y }} />
+      ))}
     </div>
   );
 }

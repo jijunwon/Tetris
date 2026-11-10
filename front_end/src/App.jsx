@@ -1,9 +1,11 @@
 import { useAuth } from './hooks/useAuth.js';
 import { useTetris } from './hooks/useTetris.js';
 import { useRanking } from './hooks/useRanking.js';
+import { useBoardShake } from './hooks/useBoardShake.js';
 import { NEXT_PREVIEW_COUNT } from './game/constants.js';
 import AuthForm from './components/AuthForm.jsx';
 import Board from './components/Board.jsx';
+import ClearPopup from './components/ClearPopup.jsx';
 import Controls from './components/Controls.jsx';
 import Overlay from './components/Overlay.jsx';
 import Panel from './components/Panel.jsx';
@@ -20,6 +22,7 @@ export default function App() {
     state.score,
     state.lines,
   );
+  const boardRef = useBoardShake(state.hardDropCount, state.lastClear);
 
   const handleLogout = () => {
     reset();
@@ -56,12 +59,13 @@ export default function App() {
           <Panel title="HOLD">
             <PiecePreview type={state.hold} dimmed={!state.canHold} />
           </Panel>
-          <Score score={state.score} />
+          <Score score={state.score} level={state.level} lines={state.lines} />
           <Controls />
         </aside>
 
-        <div className="board-wrapper">
-          <Board board={state.board} current={state.current} />
+        <div className="board-wrapper" ref={boardRef}>
+          <Board board={state.board} current={state.current} lastClear={state.lastClear} />
+          {state.lastClear && <ClearPopup key={state.lastClear.id} clear={state.lastClear} />}
           {boardOverlay}
         </div>
 

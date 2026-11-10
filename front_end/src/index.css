@@ -64,6 +64,7 @@ body {
 }
 
 .board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(var(--cols), var(--cell-size));
   grid-template-rows: repeat(var(--rows), var(--cell-size));
@@ -89,6 +90,138 @@ body {
   background: transparent;
   box-shadow: inset 0 0 0 2px var(--cell-color);
   opacity: 0.45;
+}
+
+/* 지운 줄 자리에서 번쩍이고 사라진다. 위치는 .board의 padding(4px)과 gap(1px) 기준 */
+.board__flash {
+  position: absolute;
+  top: calc(4px + var(--row) * (var(--cell-size) + 1px));
+  left: 4px;
+  right: 4px;
+  height: var(--cell-size);
+  background: #fff;
+  box-shadow: 0 0 14px 4px rgb(255 255 255 / 0.6);
+  pointer-events: none;
+  animation: row-flash 0.4s ease-out forwards;
+}
+
+@keyframes row-flash {
+  from {
+    opacity: 0.95;
+    transform: scaleY(1);
+  }
+  to {
+    opacity: 0;
+    transform: scaleY(0.15);
+  }
+}
+
+/* Clear popup */
+.clear-popup {
+  position: absolute;
+  top: 26%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 0.8);
+  pointer-events: none;
+  animation: clear-popup 1.2s ease-out forwards;
+}
+
+.clear-popup__tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: #fbbf24;
+}
+
+/* 보드 너비가 칸 크기를 따라 줄어들기 때문에 글자 크기도 칸 크기에 맞춘다 */
+.clear-popup__title {
+  font-size: calc(var(--cell-size) * 0.85);
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+.clear-popup__title--tetris {
+  font-size: calc(var(--cell-size) * 1.15);
+  color: #22d3ee;
+}
+
+.clear-popup__title--tspin {
+  font-size: calc(var(--cell-size) * 0.85);
+  letter-spacing: 0.04em;
+  color: #c084fc;
+}
+
+.clear-popup__combo {
+  font-size: 1rem;
+  color: #fb923c;
+}
+
+.clear-popup__all-clear {
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  color: #4ade80;
+}
+
+.clear-popup__points {
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.clear-popup__level {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: #facc15;
+}
+
+@keyframes clear-popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  22% {
+    transform: scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board__flash {
+    display: none;
+  }
+
+  .clear-popup {
+    animation-name: clear-popup-fade;
+  }
+}
+
+@keyframes clear-popup-fade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Overlay */
@@ -277,6 +410,25 @@ body {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--accent);
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  margin: 6px 0 0;
+}
+
+.stats__item dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.stats__item dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .ranking {

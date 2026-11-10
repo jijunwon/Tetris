@@ -1,6 +1,14 @@
-import { PIECE_SCORE, STATUS, getLevel, getLineClearScore } from './constants.js';
+import { STATUS, getLevel } from './constants.js';
 import { createBag, createPiece, getPieceCells, rotateMatrix } from './pieces.js';
-import { clearLines, collides, createBoard, getDropPosition, mergePiece } from './board.js';
+import {
+  clearLines,
+  collides,
+  createBoard,
+  getDropPosition,
+  isBoardEmpty,
+  mergePiece,
+} from './board.js';
+import { isDifficultClear, isTSpin, scoreLock } from './scoring.js';
 
 export const ACTIONS = Object.freeze({
   START: 'START',
@@ -44,15 +52,23 @@ export function createInitialState(seed) {
     score: 0,
     lines: 0,
     level: 1,
+    combo: -1,
+    backToBack: false,
+    lastMoveRotation: false,
+    lockCount: 0,
+    hardDropCount: 0,
+    // 줄을 지우거나 T-스핀을 했을 때만 바뀐다. 화면 연출(문구, 줄 삭제 효과)에 쓴다.
+    lastClear: null,
   };
 }
 
 function spawnPiece(state, type) {
   const current = createPiece(type);
+  const spawned = { ...state, current, lastMoveRotation: false };
   if (collides(state.board, current)) {
-    return { ...state, current, status: STATUS.OVER };
+    return { ...spawned, status: STATUS.OVER };
   }
-  return { ...state, current };
+  return spawned;
 }
 
 function spawnNext(state) {
@@ -68,19 +84,47 @@ function startGame(seed) {
 function tryMove(state, dx, dy) {
   const moved = { ...state.current, x: state.current.x + dx, y: state.current.y + dy };
   if (collides(state.board, moved)) return null;
-  return { ...state, current: moved };
+  return { ...state, current: moved, lastMoveRotation: false };
 }
 
 function lockPiece(state, piece) {
-  const { board, cleared } = clearLines(mergePiece(state.board, piece));
+  const tSpin = isTSpin(state.board, piece, state.lastMoveRotation);
+  const { board, cleared, rows } = clearLines(mergePiece(state.board, piece));
+  const difficult = isDifficultClear(cleared, tSpin);
+  const backToBack = difficult && state.backToBack;
+  const combo = cleared > 0 ? state.combo + 1 : -1;
+  const allClear = cleared > 0 && isBoardEmpty(board);
+  const points = scoreLock({ cleared, tSpin, backToBack, combo, allClear });
+
   const lines = state.lines + cleared;
+  const level = getLevel(lines);
+  const lockCount = state.lockCount + 1;
+  const showClear = cleared > 0 || tSpin;
+
   const locked = {
     ...state,
     board,
     current: null,
     lines,
-    level: getLevel(lines),
-    score: state.score + PIECE_SCORE + getLineClearScore(cleared),
+    level,
+    score: state.score + points,
+    combo,
+    // 줄을 지우지 않은 고정은 Back-to-Back 연속을 끊지 않는다.
+    backToBack: cleared > 0 ? difficult : state.backToBack,
+    lockCount,
+    lastClear: showClear
+      ? {
+          id: lockCount,
+          rows,
+          cleared,
+          tSpin,
+          backToBack,
+          combo,
+          allClear,
+          points,
+          levelUp: level > state.level ? level : null,
+        }
+      : state.lastClear,
   };
 
   if (getPieceCells(piece).some(({ y }) => y < 0)) {
@@ -94,7 +138,16 @@ function moveDown(state) {
 }
 
 function hardDrop(state) {
-  return lockPiece(state, getDropPosition(state.board, state.current));
+  const dropped = getDropPosition(state.board, state.current);
+  const moved = dropped.y !== state.current.y;
+  return lockPiece(
+    {
+      ...state,
+      hardDropCount: state.hardDropCount + 1,
+      lastMoveRotation: moved ? false : state.lastMoveRotation,
+    },
+    dropped,
+  );
 }
 
 function rotate(state) {
@@ -102,7 +155,9 @@ function rotate(state) {
   const shape = rotateMatrix(current.shape);
   for (const dx of ROTATION_KICKS) {
     const candidate = { ...current, shape, x: current.x + dx };
-    if (!collides(board, candidate)) return { ...state, current: candidate };
+    if (!collides(board, candidate)) {
+      return { ...state, current: candidate, lastMoveRotation: true };
+    }
   }
   return state;
 }

@@ -44,6 +44,7 @@ describe('clearLines', () => {
     const result = clearLines(board);
 
     expect(result.cleared).toBe(2);
+    expect(result.rows).toEqual([ROWS - 2, ROWS - 1]);
     expect(result.board).toHaveLength(ROWS);
     expect(result.board[ROWS - 1][0]).toBe('T');
     expect(result.board[0].every((cell) => cell === null)).toBe(true);
