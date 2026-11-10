@@ -13,7 +13,6 @@ import PiecePreview from './components/PiecePreview.jsx';
 import Ranking from './components/Ranking.jsx';
 import Score from './components/Score.jsx';
 import Stats from './components/Stats.jsx';
-import Title from './components/Title.jsx';
 import UserBar from './components/UserBar.jsx';
 
 export default function App() {
@@ -54,7 +53,7 @@ export default function App() {
 
   return (
     <main className="app">
-      <Title />
+      <h1 className="app__title">TETRIS</h1>
       <div className="layout">
         <aside className="sidebar">
           <div className="sidebar__header">

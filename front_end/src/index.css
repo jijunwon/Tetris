@@ -34,28 +34,11 @@ body {
   padding: 16px;
 }
 
-/* 글자 크기(기존 1.6rem + 5pt)를 기준으로 블록 크기를 em으로 잡는다 */
-.title {
-  display: flex;
-  gap: 0.22em;
+.app__title {
   margin: 0;
   font-size: calc(1.6rem + 5pt);
-  line-height: 1;
-}
-
-.title__letter {
-  display: grid;
-  grid-template-columns: repeat(3, 0.19em);
-  grid-auto-rows: 0.19em;
-  gap: 0.03em;
-}
-
-.title__block--filled {
-  background: var(--cell-color);
-  border-radius: 1px;
-  box-shadow:
-    inset 1px 1px 0 rgb(255 255 255 / 0.35),
-    inset -1px -1px 0 rgb(0 0 0 / 0.35);
+  letter-spacing: 0.4em;
+  color: var(--accent);
 }
 
 .layout {
@@ -354,25 +337,70 @@ body {
 
 .user-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 0 4px;
-  font-size: 0.85rem;
+  padding: 5px 6px 5px 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.user-bar__avatar {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+  background: var(--cell-color);
+  border-radius: 3px;
+  box-shadow:
+    inset 3px 3px 0 rgb(255 255 255 / 0.3),
+    inset -3px -3px 0 rgb(0 0 0 / 0.3);
+}
+
+.user-bar__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.user-bar__label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
   color: var(--text-muted);
 }
 
 .user-bar__name {
-  min-width: 0;
   overflow: hidden;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: var(--text);
 }
 
-.user-bar .link-button {
+.user-bar__logout {
+  display: flex;
   flex-shrink: 0;
+  padding: 5px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-bar__logout:hover,
+.user-bar__logout:focus-visible {
+  color: #f87171;
+  background: rgb(248 113 113 / 0.12);
 }
 
 .overlay__save {
