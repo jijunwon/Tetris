@@ -154,6 +154,8 @@ describe('gameReducer', () => {
     const next = gameReducer(state, { type: ACTIONS.HARD_DROP });
 
     expect(next.status).toBe(STATUS.OVER);
+    expect(next.current).toBeNull();
+    expect(next.board[0].slice(3, 7)).toEqual(['Z', 'Z', 'Z', 'Z']);
   });
 
   it('블록이 보드 위로 삐져나온 채 고정되면 게임 오버', () => {

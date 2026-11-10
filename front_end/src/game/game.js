@@ -69,11 +69,11 @@ export function createInitialState(seed) {
 
 function spawnPiece(state, type) {
   const current = createPiece(type);
-  const spawned = { ...state, current, lastMoveRotation: false };
+  // 나올 자리가 막혔으면 새 블록을 쌓인 블록 위에 겹쳐 그리지 않도록 비워 둔다.
   if (collides(state.board, current)) {
-    return { ...spawned, status: STATUS.OVER };
+    return { ...state, current: null, lastMoveRotation: false, status: STATUS.OVER };
   }
-  return spawned;
+  return { ...state, current, lastMoveRotation: false };
 }
 
 function spawnNext(state) {
