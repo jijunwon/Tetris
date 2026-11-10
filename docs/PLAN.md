@@ -12,7 +12,7 @@
 | 3 | 프론트엔드 ↔ 백엔드 연결 | 완료 | `feature/ranking-integration` | (2단계에 포함) |
 | 4 | DB를 MySQL로 전환 | 완료 | `feature/mysql-profile` | 1일 |
 | 5 | AWS EC2 배포 | 완료 (https://jijunwon-tetris.duckdns.org) | `chore/depoly-ec2` | 1~3일 |
-| 6 | CI/CD 자동 배포 (선택) | 대기 | `ci/github-actions` | 선택 |
+| 6 | CI/CD 자동 배포 (선택) | 완료 | `ci/github-actions` | 선택 |
 
 - 단계를 끝내면 위 표의 상태를 바꾸고, 그날 한 일은 `docs/Update.md`, 바로 다음 할 일은 `docs/TODO.md`에 적는다.
 
@@ -134,7 +134,7 @@ $env:DB_PASSWORD="비밀번호"
 
 ## 6단계: 자동 배포 (CI/CD, 선택)
 
-- [ ] GitHub Actions: `main`에 push하면 빌드 → 테스트 → EC2로 JAR 전송 → 서비스 재시작 (`.github/workflows/deploy.yml`)
+- [x] GitHub Actions: `main`에 push하면 빌드 → 테스트 → EC2로 JAR 전송 → 서비스 재시작 (`.github/workflows/deploy.yml`)
   - 다른 브랜치에 push하면 테스트와 빌드만 한다
   - SSH 22번은 배포하는 동안만 GitHub 서버 IP에 열고, 끝나면 닫는다 (IAM 사용자는 이 보안 그룹 규칙만 바꿀 수 있게 제한)
   - 배포 전용 SSH 키를 따로 쓰고, 직전 JAR는 `/opt/tetris/app.jar.bak`으로 남긴다

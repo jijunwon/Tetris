@@ -67,3 +67,9 @@
 - 탄력적 IP를 연결해 서버 주소 고정
 - DuckDNS 무료 도메인 연결, 보안 그룹에 443 추가, certbot으로 HTTPS 적용
 - https://jijunwon-tetris.duckdns.org 에서 게임 접속 확인
+
+### CI/CD (GitHub Actions)
+- push하면 프론트·백엔드 테스트와 JAR 빌드, `main`이면 EC2에 자동 배포
+- 배포하는 동안만 GitHub 서버 IP에 SSH를 열고 끝나면 닫음 (IAM 사용자는 이 보안 그룹만 수정 가능)
+- 배포 전용 SSH 키 분리, GitHub Secrets 6개 등록
+- 첫 배포는 IAM 권한 오류(`UnauthorizedOperation`)로 실패, 보안 그룹 ID Secret과 정책을 맞춘 뒤 재실행해서 성공
