@@ -1,7 +1,7 @@
 export const COLS = 10;
 export const ROWS = 20;
 
-export const NEXT_PREVIEW_COUNT = 3;
+export const NEXT_PREVIEW_COUNT = 4;
 export const RANKING_SIZE = 5;
 
 export const PIECE_SCORE = 40;

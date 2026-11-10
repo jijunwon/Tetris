@@ -1,5 +1,13 @@
 import { useElapsedTime } from '../hooks/useElapsedTime.js';
 
+// 0:00 형식 (분:초)
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${minutes}:${seconds}`;
+}
+
 export default function Score({ score, level, lines, status }) {
   const elapsed = useElapsedTime(status);
 
@@ -7,7 +15,7 @@ export default function Score({ score, level, lines, status }) {
     ['SCORE', score.toLocaleString(), 'stats__value--score'],
     ['LEVEL', level],
     ['LINES', lines],
-    ['TIME', `${(elapsed / 1000).toFixed(1)}s`],
+    ['TIME', formatTime(elapsed)],
   ];
 
   return (

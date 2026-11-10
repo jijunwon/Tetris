@@ -12,6 +12,7 @@ import Panel from './components/Panel.jsx';
 import PiecePreview from './components/PiecePreview.jsx';
 import Ranking from './components/Ranking.jsx';
 import Score from './components/Score.jsx';
+import Title from './components/Title.jsx';
 import UserBar from './components/UserBar.jsx';
 
 export default function App() {
@@ -52,8 +53,7 @@ export default function App() {
 
   return (
     <main className="app">
-      <h1 className="app__title">TETRIS</h1>
-      {auth.user && <UserBar username={auth.user.username} onLogout={handleLogout} />}
+      <Title />
       <div className="layout">
         <aside className="sidebar">
           <Panel title="HOLD">
@@ -80,6 +80,7 @@ export default function App() {
         </div>
 
         <aside className="sidebar">
+          {auth.user && <UserBar username={auth.user.username} onLogout={handleLogout} />}
           <Panel title="NEXT">
             {state.queue.slice(0, NEXT_PREVIEW_COUNT).map((type, index) => (
               <PiecePreview key={index} type={type} />
