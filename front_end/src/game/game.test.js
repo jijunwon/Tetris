@@ -90,6 +90,16 @@ describe('gameReducer', () => {
     expect(gameReducer(state, { type: ACTIONS.SOFT_DROP }).score).toBe(0);
   });
 
+  it('소프트 드롭은 실제로 내려갔을 때만 횟수를 센다', () => {
+    const dropped = gameReducer(startedState(), { type: ACTIONS.SOFT_DROP });
+    const grounded = { ...dropped, current: { ...createPiece('O'), y: ROWS - 2 } };
+    const locked = gameReducer(grounded, { type: ACTIONS.SOFT_DROP });
+
+    expect(dropped.softDropCount).toBe(1);
+    expect(locked.softDropCount).toBe(1);
+    expect(locked.lockCount).toBe(1);
+  });
+
   it('줄을 채우면 지우고 점수와 줄 수가 오른다', () => {
     const board = createBoard();
     board[ROWS - 2][0] = 'T';
@@ -179,16 +189,30 @@ describe('보너스 점수', () => {
     expect(next.score).toBe(40 + 800);
   });
 
-  it('테트리스를 연속으로 하면 두 번째는 Back-to-Back(1.5배)과 콤보 점수를 받는다', () => {
+  it('테트리스를 연속으로 하면 두 번째는 Back-to-Back(1.5배)에 2콤보(2배)까지 받는다', () => {
     const first = gameReducer(
       { ...startedState(), board: tetrisReadyBoard(8), current: verticalI() },
       { type: ACTIONS.HARD_DROP },
     );
     const second = gameReducer({ ...first, current: verticalI() }, { type: ACTIONS.HARD_DROP });
 
-    expect(first.lastClear).toMatchObject({ backToBack: false, combo: 0 });
-    expect(second.lastClear).toMatchObject({ backToBack: true, combo: 1 });
-    expect(second.score - first.score).toBe(40 + 3200 * 1.5 + 100);
+    expect(first.lastClear).toMatchObject({ backToBack: false, combo: 1 });
+    expect(second.lastClear).toMatchObject({ backToBack: true, combo: 2 });
+    expect(second.score - first.score).toBe(40 + 3200 * 1.5 * 2);
+  });
+
+  it('3콤보는 줄 삭제 점수의 3배를 받는다', () => {
+    const state = {
+      ...startedState(),
+      combo: 2,
+      board: tetrisReadyBoard(1),
+      current: verticalI(),
+    };
+
+    const next = gameReducer(state, { type: ACTIONS.HARD_DROP });
+
+    expect(next.combo).toBe(3);
+    expect(next.score).toBe(40 + 200 * 3);
   });
 
   it('줄을 지우지 못하고 고정하면 콤보가 끊긴다', () => {
@@ -201,8 +225,8 @@ describe('보너스 점수', () => {
       { type: ACTIONS.HARD_DROP },
     );
 
-    expect(cleared.combo).toBe(0);
-    expect(next.combo).toBe(-1);
+    expect(cleared.combo).toBe(1);
+    expect(next.combo).toBe(0);
     expect(next.backToBack).toBe(true);
   });
 

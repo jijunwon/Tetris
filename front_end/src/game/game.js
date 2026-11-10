@@ -52,11 +52,12 @@ export function createInitialState(seed) {
     score: 0,
     lines: 0,
     level: 1,
-    combo: -1,
+    combo: 0,
     backToBack: false,
     lastMoveRotation: false,
     lockCount: 0,
     hardDropCount: 0,
+    softDropCount: 0,
     // 줄을 지우거나 T-스핀을 했을 때만 바뀐다. 화면 연출(문구, 줄 삭제 효과)에 쓴다.
     lastClear: null,
   };
@@ -92,7 +93,7 @@ function lockPiece(state, piece) {
   const { board, cleared, rows } = clearLines(mergePiece(state.board, piece));
   const difficult = isDifficultClear(cleared, tSpin);
   const backToBack = difficult && state.backToBack;
-  const combo = cleared > 0 ? state.combo + 1 : -1;
+  const combo = cleared > 0 ? state.combo + 1 : 0;
   const allClear = cleared > 0 && isBoardEmpty(board);
   const points = scoreLock({ cleared, tSpin, backToBack, combo, allClear });
 
@@ -135,6 +136,13 @@ function lockPiece(state, piece) {
 
 function moveDown(state) {
   return tryMove(state, 0, 1) ?? lockPiece(state, state.current);
+}
+
+// 소프트 드롭으로 실제로 내려간 횟수를 세어 화면이 잔상을 남길 수 있게 한다.
+function softDrop(state) {
+  const moved = tryMove(state, 0, 1);
+  if (!moved) return lockPiece(state, state.current);
+  return { ...moved, softDropCount: state.softDropCount + 1 };
 }
 
 function hardDrop(state) {
@@ -197,7 +205,7 @@ export function gameReducer(state, action) {
     case ACTIONS.MOVE_RIGHT:
       return tryMove(state, 1, 0) ?? state;
     case ACTIONS.SOFT_DROP:
-      return moveDown(state);
+      return softDrop(state);
     case ACTIONS.HARD_DROP:
       return hardDrop(state);
     case ACTIONS.ROTATE:

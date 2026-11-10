@@ -64,7 +64,12 @@ export default function App() {
         </aside>
 
         <div className="board-wrapper" ref={boardRef}>
-          <Board board={state.board} current={state.current} lastClear={state.lastClear} />
+          <Board
+            board={state.board}
+            current={state.current}
+            lastClear={state.lastClear}
+            softDropCount={state.softDropCount}
+          />
           {state.lastClear && <ClearPopup key={state.lastClear.id} clear={state.lastClear} />}
           {boardOverlay}
         </div>

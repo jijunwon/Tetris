@@ -92,6 +92,33 @@ body {
   opacity: 0.45;
 }
 
+/* 소프트 드롭 잔상: 내려가기 전 자리에 블록 색으로 옅게 남았다가 사라진다 */
+.board__trail {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: soft-drop-trail 0.22s ease-out forwards;
+}
+
+.board__trail-cell {
+  position: absolute;
+  top: calc(4px + var(--y) * (var(--cell-size) + 1px));
+  left: calc(4px + var(--x) * (var(--cell-size) + 1px));
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: var(--cell-color);
+  box-shadow: 0 0 8px var(--cell-color);
+}
+
+@keyframes soft-drop-trail {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* 지운 줄 자리에서 번쩍이고 사라진다. 위치는 .board의 padding(4px)과 gap(1px) 기준 */
 .board__flash {
   position: absolute;
@@ -142,20 +169,32 @@ body {
 
 /* 보드 너비가 칸 크기를 따라 줄어들기 때문에 글자 크기도 칸 크기에 맞춘다 */
 .clear-popup__title {
-  font-size: calc(var(--cell-size) * 0.85);
-  letter-spacing: 0.1em;
-  color: #fff;
+  font-size: calc(var(--cell-size) * 0.95);
+  letter-spacing: 0.06em;
 }
 
-.clear-popup__title--tetris {
+.clear-popup__title--good {
+  color: #facc15;
+}
+
+.clear-popup__title--great {
+  color: #4ade80;
+}
+
+.clear-popup__title--perfect {
+  font-size: calc(var(--cell-size) * 1.05);
+  color: #60a5fa;
+}
+
+.clear-popup__title--excellent {
   font-size: calc(var(--cell-size) * 1.15);
-  color: #22d3ee;
+  color: #c084fc;
 }
 
-.clear-popup__title--tspin {
-  font-size: calc(var(--cell-size) * 0.85);
-  letter-spacing: 0.04em;
-  color: #c084fc;
+.clear-popup__tspin {
+  font-size: calc(var(--cell-size) * 0.7);
+  letter-spacing: 0.12em;
+  color: #f0abfc;
 }
 
 .clear-popup__combo {
@@ -166,7 +205,7 @@ body {
 .clear-popup__all-clear {
   font-size: 1.3rem;
   letter-spacing: 0.1em;
-  color: #4ade80;
+  color: #f472b6;
 }
 
 .clear-popup__points {

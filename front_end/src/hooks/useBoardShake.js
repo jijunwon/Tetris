@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { isDifficultClear } from '../game/scoring.js';
+import { prefersReducedMotion } from '../motion.js';
 
 const DROP_BUMP = [
   { transform: 'translateY(0)' },
@@ -15,10 +16,6 @@ const BIG_SHAKE = [
   { transform: 'translate(2px, 0)' },
   { transform: 'translate(0, 0)' },
 ];
-
-function prefersReducedMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-}
 
 // 하드 드롭하면 살짝 튕기고, 테트리스·T-스핀·All Clear면 크게 흔든다.
 export function useBoardShake(hardDropCount, lastClear) {
