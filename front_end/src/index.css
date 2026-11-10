@@ -678,9 +678,12 @@ body {
   color: var(--accent);
 }
 
+/* HOLD와 RANKING 사이의 남는 높이를 모두 차지하고, 그 안에서 가운데에 놓는다 */
 .stats {
   display: flex;
+  flex: 1;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
   margin: 0;
   padding: 0 4px;
