@@ -12,6 +12,7 @@ import Panel from './components/Panel.jsx';
 import PiecePreview from './components/PiecePreview.jsx';
 import Ranking from './components/Ranking.jsx';
 import Score from './components/Score.jsx';
+import Stats from './components/Stats.jsx';
 import Title from './components/Title.jsx';
 import UserBar from './components/UserBar.jsx';
 
@@ -56,15 +57,13 @@ export default function App() {
       <Title />
       <div className="layout">
         <aside className="sidebar">
+          <div className="sidebar__header">
+            <Score score={state.score} />
+          </div>
           <Panel title="HOLD">
             <PiecePreview type={state.hold} dimmed={!state.canHold} />
           </Panel>
-          <Score
-            score={state.score}
-            level={state.level}
-            lines={state.lines}
-            status={state.status}
-          />
+          <Stats level={state.level} lines={state.lines} status={state.status} />
           <Ranking ranking={ranking} failed={rankingFailed} latestId={latestId} />
         </aside>
 
@@ -80,7 +79,9 @@ export default function App() {
         </div>
 
         <aside className="sidebar">
-          {auth.user && <UserBar username={auth.user.username} onLogout={handleLogout} />}
+          <div className="sidebar__header">
+            {auth.user && <UserBar username={auth.user.username} onLogout={handleLogout} />}
+          </div>
           <Panel title="NEXT">
             {state.queue.slice(0, NEXT_PREVIEW_COUNT).map((type, index) => (
               <PiecePreview key={index} type={type} />

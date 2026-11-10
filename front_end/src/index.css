@@ -458,6 +458,36 @@ body {
   font-size: 0.65rem;
 }
 
+/* 양쪽 사이드바의 첫 줄(SCORE / 닉네임)을 같은 높이로 맞춰서 HOLD와 NEXT가 같은 줄에서 시작하게 한다 */
+.sidebar__header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 48px;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 4px;
+  text-align: right;
+}
+
+.score__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.score__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
 .stats {
   display: flex;
   flex-direction: column;
@@ -475,14 +505,9 @@ body {
 
 .stats__value {
   margin: 0;
-  font-size: calc(1.2rem - 4pt);
+  font-size: calc(1.2rem - 2pt);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-}
-
-.stats__value--score {
-  font-size: 1.5rem;
-  color: var(--accent);
 }
 
 .ranking {
