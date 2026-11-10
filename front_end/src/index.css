@@ -9,6 +9,8 @@
   --text-muted: #94a3b8;
   --accent: #38bdf8;
   --accent-soft: rgb(56 189 248 / 0.12);
+  /* 제목과 점수 숫자 색. 다크·네온은 강조색과 같고, 라이트만 밝은 배경에 맞춰 더 진하게 바꾼다 */
+  --headline: var(--accent);
   --cell-empty: #0b1120;
   --overlay-bg: rgb(15 23 42 / 0.82);
   --piece-I: #22d3ee;
@@ -35,6 +37,7 @@
   --text-muted: #64748b;
   --accent: #0284c7;
   --accent-soft: rgb(2 132 199 / 0.1);
+  --headline: #1e40af;
   --cell-empty: #f1f5f9;
   --overlay-bg: rgb(241 245 249 / 0.85);
   /* 밝은 배경에서 눈부시지 않게 같은 색상 계열을 채도는 낮추고 조금 더 깊게 */
@@ -137,7 +140,7 @@ body {
   margin: 0;
   font-size: calc(1.6rem + 5pt);
   letter-spacing: 0.4em;
-  color: var(--accent);
+  color: var(--headline);
 }
 
 .layout {
@@ -675,7 +678,7 @@ body {
   font-weight: 700;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
-  color: var(--accent);
+  color: var(--headline);
 }
 
 /* HOLD와 RANKING 사이의 남는 높이를 모두 차지하고, 그 안에서 가운데에 놓는다 */
