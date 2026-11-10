@@ -1,5 +1,5 @@
 import { COLS, ROWS } from './constants.js';
-import { getPieceCells } from './pieces.js';
+import { GARBAGE, getPieceCells } from './pieces.js';
 
 // 각 칸은 비어 있으면 null, 채워져 있으면 블록 종류('I', 'T' 등)를 담는다.
 export function createBoard() {
@@ -33,6 +33,12 @@ export function clearLines(board) {
   const cleared = rows.length;
   const emptyRows = Array.from({ length: cleared }, () => Array(COLS).fill(null));
   return { board: [...emptyRows, ...remaining], cleared, rows };
+}
+
+// holeX 한 칸만 빈 방해 줄을 맨 아래에 넣고 전체를 한 줄 올린다. 맨 윗줄은 버려진다.
+export function addGarbageRow(board, holeX) {
+  const row = Array.from({ length: COLS }, (_, x) => (x === holeX ? null : GARBAGE));
+  return [...board.slice(1), row];
 }
 
 export function isBoardEmpty(board) {

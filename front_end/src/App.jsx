@@ -59,8 +59,13 @@ export default function App() {
           <Panel title="HOLD">
             <PiecePreview type={state.hold} dimmed={!state.canHold} />
           </Panel>
-          <Score score={state.score} level={state.level} lines={state.lines} />
-          <Controls />
+          <Score
+            score={state.score}
+            level={state.level}
+            lines={state.lines}
+            status={state.status}
+          />
+          <Ranking ranking={ranking} failed={rankingFailed} latestId={latestId} />
         </aside>
 
         <div className="board-wrapper" ref={boardRef}>
@@ -80,7 +85,7 @@ export default function App() {
               <PiecePreview key={index} type={type} />
             ))}
           </Panel>
-          <Ranking ranking={ranking} failed={rankingFailed} latestId={latestId} />
+          <Controls />
         </aside>
       </div>
     </main>

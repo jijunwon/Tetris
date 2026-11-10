@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { PIECES } from '../game/pieces.js';
+import { getCellColor } from '../game/pieces.js';
 
 function Cell({ type, ghost = false }) {
   if (!type) return <div className="cell" />;
@@ -7,7 +7,7 @@ function Cell({ type, ghost = false }) {
   return (
     <div
       className={ghost ? 'cell cell--ghost' : 'cell cell--filled'}
-      style={{ '--cell-color': PIECES[type].color }}
+      style={{ '--cell-color': getCellColor(type) }}
     />
   );
 }

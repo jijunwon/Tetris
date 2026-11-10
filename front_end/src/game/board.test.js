@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { COLS, ROWS } from './constants.js';
-import { clearLines, collides, createBoard, getDropPosition, mergePiece } from './board.js';
-import { createPiece } from './pieces.js';
+import {
+  addGarbageRow,
+  clearLines,
+  collides,
+  createBoard,
+  getDropPosition,
+  mergePiece,
+} from './board.js';
+import { GARBAGE, createPiece } from './pieces.js';
 
 describe('collides', () => {
   it('벽과 바닥을 벗어나면 충돌한다', () => {
@@ -48,6 +55,20 @@ describe('clearLines', () => {
     expect(result.board).toHaveLength(ROWS);
     expect(result.board[ROWS - 1][0]).toBe('T');
     expect(result.board[0].every((cell) => cell === null)).toBe(true);
+  });
+});
+
+describe('addGarbageRow', () => {
+  it('빈칸이 하나인 회색 줄을 맨 아래에 넣고 나머지를 한 줄 올린다', () => {
+    const board = createBoard();
+    board[ROWS - 1][0] = 'T';
+
+    const raised = addGarbageRow(board, 3);
+
+    expect(raised).toHaveLength(ROWS);
+    expect(raised[ROWS - 2][0]).toBe('T');
+    expect(raised[ROWS - 1][3]).toBeNull();
+    expect(raised[ROWS - 1].filter((cell) => cell === GARBAGE)).toHaveLength(COLS - 1);
   });
 });
 

@@ -431,30 +431,13 @@ body {
   font-size: 0.65rem;
 }
 
-.score {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0 4px;
-}
-
-.score__label {
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
-}
-
-.score__value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent);
-}
-
 .stats {
   display: flex;
-  gap: 16px;
-  margin: 6px 0 0;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0 4px;
+  text-align: right;
 }
 
 .stats__item dt {
@@ -463,11 +446,16 @@ body {
   color: var(--text-muted);
 }
 
-.stats__item dd {
+.stats__value {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+.stats__value--score {
+  font-size: 1.5rem;
+  color: var(--accent);
 }
 
 .ranking {

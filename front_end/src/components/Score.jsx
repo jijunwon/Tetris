@@ -1,18 +1,23 @@
-export default function Score({ score, level, lines }) {
+import { useElapsedTime } from '../hooks/useElapsedTime.js';
+
+export default function Score({ score, level, lines, status }) {
+  const elapsed = useElapsedTime(status);
+
+  const stats = [
+    ['SCORE', score.toLocaleString(), 'stats__value--score'],
+    ['LEVEL', level],
+    ['LINES', lines],
+    ['TIME', `${(elapsed / 1000).toFixed(1)}s`],
+  ];
+
   return (
-    <div className="score">
-      <span className="score__label">SCORE</span>
-      <span className="score__value">{score.toLocaleString()}</span>
-      <dl className="stats">
-        <div className="stats__item">
-          <dt>LEVEL</dt>
-          <dd>{level}</dd>
+    <dl className="stats">
+      {stats.map(([label, value, modifier]) => (
+        <div key={label} className="stats__item">
+          <dt>{label}</dt>
+          <dd className={modifier ? `stats__value ${modifier}` : 'stats__value'}>{value}</dd>
         </div>
-        <div className="stats__item">
-          <dt>LINES</dt>
-          <dd>{lines}</dd>
-        </div>
-      </dl>
-    </div>
+      ))}
+    </dl>
   );
 }

@@ -1,6 +1,8 @@
-import { STATUS, getLevel } from './constants.js';
+import { COLS, STATUS, getLevel } from './constants.js';
 import { createBag, createPiece, getPieceCells, rotateMatrix } from './pieces.js';
+import { nextRandom } from './random.js';
 import {
+  addGarbageRow,
   clearLines,
   collides,
   createBoard,
@@ -131,7 +133,20 @@ function lockPiece(state, piece) {
   if (getPieceCells(piece).some(({ y }) => y < 0)) {
     return { ...locked, status: STATUS.OVER };
   }
-  return spawnNext(locked);
+
+  return spawnNext(raiseGarbage(locked, level - state.level));
+}
+
+// 오른 레벨 수만큼 빈칸 위치가 랜덤인 방해 줄을 밑에서 올린다.
+// 레벨은 줄을 지운 직후에만 오르고 그때 맨 윗줄은 항상 비어 있어서, 밀려나 사라지는 블록은 없다.
+function raiseGarbage(state, count) {
+  let { board, seed } = state;
+  for (let i = 0; i < count; i += 1) {
+    const { value, seed: nextSeed } = nextRandom(seed);
+    seed = nextSeed;
+    board = addGarbageRow(board, Math.floor(value * COLS));
+  }
+  return { ...state, board, seed };
 }
 
 function moveDown(state) {

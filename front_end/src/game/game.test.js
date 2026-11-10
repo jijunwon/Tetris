@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { COLS, ROWS, STATUS } from './constants.js';
 import { ACTIONS, createInitialState, gameReducer } from './game.js';
 import { createBoard } from './board.js';
-import { createPiece, rotateMatrix } from './pieces.js';
+import { GARBAGE, createPiece, rotateMatrix } from './pieces.js';
 
 function startedState(seed = 1) {
   return gameReducer(createInitialState(seed), { type: ACTIONS.START, seed });
@@ -253,5 +253,31 @@ describe('보너스 점수', () => {
 
     expect(next.level).toBe(2);
     expect(next.lastClear.levelUp).toBe(2);
+  });
+
+  it('레벨이 오르면 한 칸만 빈 회색 줄이 밑에서 올라온다', () => {
+    const state = {
+      ...startedState(),
+      lines: 9,
+      board: tetrisReadyBoard(1),
+      current: verticalI(),
+    };
+
+    const next = gameReducer(state, { type: ACTIONS.HARD_DROP });
+    const bottom = next.board[ROWS - 1];
+
+    expect(bottom.filter((cell) => cell === null)).toHaveLength(1);
+    expect(bottom.filter((cell) => cell === GARBAGE)).toHaveLength(COLS - 1);
+    expect(next.board[ROWS - 2][0]).toBe('T');
+    expect(next.status).toBe(STATUS.PLAYING);
+  });
+
+  it('레벨이 오르지 않으면 방해 줄이 올라오지 않는다', () => {
+    const next = gameReducer(
+      { ...startedState(), board: tetrisReadyBoard(1), current: verticalI() },
+      { type: ACTIONS.HARD_DROP },
+    );
+
+    expect(next.board.flat()).not.toContain(GARBAGE);
   });
 });

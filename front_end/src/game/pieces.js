@@ -62,6 +62,14 @@ export const PIECES = {
 
 export const PIECE_TYPES = Object.keys(PIECES);
 
+// 레벨이 오를 때 밑에서 올라오는 방해 줄의 칸. 7-bag에 들어가지 않도록 PIECES와 따로 둔다.
+export const GARBAGE = 'G';
+const GARBAGE_COLOR = '#6b7280';
+
+export function getCellColor(type) {
+  return type === GARBAGE ? GARBAGE_COLOR : PIECES[type].color;
+}
+
 export function createPiece(type) {
   const { shape } = PIECES[type];
   return {
