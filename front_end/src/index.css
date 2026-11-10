@@ -408,12 +408,6 @@ body {
   color: var(--headline);
 }
 
-.overlay__score {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--accent);
-}
-
 .overlay__button {
   padding: 10px 28px;
   font: inherit;

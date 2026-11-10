@@ -84,7 +84,6 @@ export default function App() {
     boardOverlay = (
       <Overlay
         status={state.status}
-        score={state.score}
         saveStatus={saveStatus}
         onStart={start}
         onResume={togglePause}

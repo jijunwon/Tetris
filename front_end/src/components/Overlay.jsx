@@ -13,7 +13,7 @@ const SAVE_MESSAGE = {
   [SAVE_STATUS.FAILED]: '기록을 저장하지 못했습니다',
 };
 
-export default function Overlay({ status, score, saveStatus, onStart, onResume }) {
+export default function Overlay({ status, saveStatus, onStart, onResume }) {
   const content = CONTENT[status];
   if (!content) return null;
 
@@ -30,7 +30,6 @@ export default function Overlay({ status, score, saveStatus, onStart, onResume }
       >
         {content.title}
       </h2>
-      {isOver && <p className="overlay__score">점수 {score.toLocaleString()}</p>}
       {saveMessage && (
         <p
           className={
