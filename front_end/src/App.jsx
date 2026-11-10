@@ -2,6 +2,7 @@ import { useAuth } from './hooks/useAuth.js';
 import { useTetris } from './hooks/useTetris.js';
 import { useRanking } from './hooks/useRanking.js';
 import { useBoardShake } from './hooks/useBoardShake.js';
+import { useTheme } from './hooks/useTheme.js';
 import { NEXT_PREVIEW_COUNT } from './game/constants.js';
 import AuthForm from './components/AuthForm.jsx';
 import Board from './components/Board.jsx';
@@ -17,6 +18,7 @@ import UserBar from './components/UserBar.jsx';
 
 export default function App() {
   const auth = useAuth();
+  const [theme, setTheme] = useTheme();
   const { state, start, reset, togglePause } = useTetris(Boolean(auth.user));
   const { ranking, rankingFailed, latestId, saveStatus } = useRanking(
     state.status,
@@ -83,6 +85,8 @@ export default function App() {
               <UserBar
                 nickname={auth.user.nickname}
                 username={auth.user.username}
+                theme={theme}
+                onThemeChange={setTheme}
                 onLogout={handleLogout}
               />
             )}

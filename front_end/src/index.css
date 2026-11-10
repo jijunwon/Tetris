@@ -8,10 +8,70 @@
   --text: #e2e8f0;
   --text-muted: #94a3b8;
   --accent: #38bdf8;
+  --accent-soft: rgb(56 189 248 / 0.12);
+  --cell-empty: #0b1120;
+  --overlay-bg: rgb(15 23 42 / 0.82);
 
   font-family: 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
+}
+
+/* 테마: <html data-theme="..."> 로 바꾼다. 다크는 위 :root 값 그대로다. */
+:root[data-theme='light'] {
+  --bg: #e2e8f0;
+  --surface: #f8fafc;
+  --border: #cbd5e1;
+  --grid-line: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #0284c7;
+  --accent-soft: rgb(2 132 199 / 0.1);
+  --cell-empty: #f1f5f9;
+  --overlay-bg: rgb(241 245 249 / 0.85);
+}
+
+:root[data-theme='neon'] {
+  --bg: #07010f;
+  --surface: #120424;
+  --border: #6d28d9;
+  --grid-line: #1a0833;
+  --text: #f5e9ff;
+  --text-muted: #b18cd9;
+  --accent: #ff2bd6;
+  --accent-soft: rgb(255 43 214 / 0.14);
+  --cell-empty: #0a0216;
+  --overlay-bg: rgb(7 1 15 / 0.82);
+}
+
+:root[data-theme='neon'] .app__title {
+  text-shadow:
+    0 0 6px var(--accent),
+    0 0 18px var(--accent);
+}
+
+:root[data-theme='neon'] .board,
+:root[data-theme='neon'] .panel,
+:root[data-theme='neon'] .user-bar {
+  box-shadow:
+    0 0 10px rgb(168 85 247 / 0.45),
+    inset 0 0 10px rgb(168 85 247 / 0.15);
+}
+
+:root[data-theme='neon'] .cell--filled {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.5),
+    0 0 8px var(--cell-color);
+}
+
+:root[data-theme='neon'] .cell--ghost {
+  box-shadow:
+    inset 0 0 0 2px var(--cell-color),
+    0 0 6px var(--cell-color);
+}
+
+:root[data-theme='neon'] .score__value {
+  text-shadow: 0 0 8px var(--accent);
 }
 
 * {
@@ -76,7 +136,7 @@ body {
 }
 
 .cell {
-  background: #0b1120;
+  background: var(--cell-empty);
 }
 
 .cell--filled {
@@ -274,7 +334,7 @@ body {
   gap: 12px;
   padding: 12px;
   text-align: center;
-  background: rgb(15 23 42 / 0.82);
+  background: var(--overlay-bg);
   border-radius: 6px;
 }
 
@@ -338,29 +398,11 @@ body {
 .user-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 6px 5px 5px;
+  gap: 2px;
+  padding: 5px 4px 5px 10px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
-}
-
-.user-bar__avatar {
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  width: 28px;
-  height: 28px;
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #fff;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
-  background: var(--cell-color);
-  border-radius: 3px;
-  box-shadow:
-    inset 3px 3px 0 rgb(255 255 255 / 0.3),
-    inset -3px -3px 0 rgb(0 0 0 / 0.3);
 }
 
 .user-bar__info {
@@ -372,7 +414,7 @@ body {
 }
 
 .user-bar__label {
-  font-size: 0.6rem;
+  font-size: calc(0.6rem - 1pt);
   letter-spacing: 0.2em;
   color: var(--text-muted);
 }
@@ -386,7 +428,7 @@ body {
   color: var(--text);
 }
 
-.user-bar__logout {
+.icon-button {
   display: flex;
   flex-shrink: 0;
   padding: 5px;
@@ -397,10 +439,90 @@ body {
   cursor: pointer;
 }
 
-.user-bar__logout:hover,
-.user-bar__logout:focus-visible {
+.icon-button:hover,
+.icon-button:focus-visible,
+.icon-button[aria-expanded='true'] {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.icon-button--danger:hover,
+.icon-button--danger:focus-visible {
   color: #f87171;
   background: rgb(248 113 113 / 0.12);
+}
+
+/* Theme menu */
+.theme-menu {
+  position: relative;
+}
+
+.theme-menu__list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -34px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 140px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+}
+
+.theme-menu__title {
+  padding: 0 6px 4px;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+}
+
+.theme-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.theme-menu__item:hover,
+.theme-menu__item:focus-visible {
+  background: var(--accent-soft);
+}
+
+.theme-menu__item--active {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.theme-menu__swatch {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.theme-menu__swatch--light {
+  background: linear-gradient(135deg, #f8fafc 50%, #0284c7 50%);
+}
+
+.theme-menu__swatch--dark {
+  background: linear-gradient(135deg, #0f172a 50%, #38bdf8 50%);
+}
+
+.theme-menu__swatch--neon {
+  background: linear-gradient(135deg, #0a0118 50%, #ff2bd6 50%);
+  box-shadow: 0 0 6px #ff2bd6;
 }
 
 .overlay__save {
