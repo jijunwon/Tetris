@@ -23,7 +23,13 @@ export default function Overlay({ status, score, saveStatus, onStart, onResume }
 
   return (
     <div className="overlay">
-      <h2 className="overlay__title">{content.title}</h2>
+      <h2
+        className={
+          status === STATUS.READY ? 'overlay__title overlay__title--brand' : 'overlay__title'
+        }
+      >
+        {content.title}
+      </h2>
       {isOver && <p className="overlay__score">점수 {score.toLocaleString()}</p>}
       {saveMessage && (
         <p

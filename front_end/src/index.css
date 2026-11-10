@@ -70,7 +70,8 @@
   --overlay-bg: rgb(7 1 15 / 0.82);
 }
 
-:root[data-theme='neon'] .app__title {
+:root[data-theme='neon'] .app__title,
+:root[data-theme='neon'] .overlay__title--brand {
   text-shadow:
     0 0 6px var(--accent),
     0 0 18px var(--accent);
@@ -384,6 +385,11 @@ body {
   margin: 0;
   font-size: 1.8rem;
   letter-spacing: 0.15em;
+}
+
+/* 시작 화면의 TETRIS는 위쪽 제목과 같은 색으로 */
+.overlay__title--brand {
+  color: var(--headline);
 }
 
 .overlay__score {
