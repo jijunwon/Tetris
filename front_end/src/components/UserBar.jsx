@@ -1,6 +1,4 @@
-import ThemeMenu from './ThemeMenu.jsx';
-
-export default function UserBar({ nickname, username, theme, onThemeChange, onLogout }) {
+export default function UserBar({ nickname, username, onLogout }) {
   const displayName = nickname ?? username;
 
   return (
@@ -11,7 +9,6 @@ export default function UserBar({ nickname, username, theme, onThemeChange, onLo
           {displayName}
         </span>
       </div>
-      <ThemeMenu theme={theme} onChange={onThemeChange} />
       <button
         type="button"
         className="icon-button icon-button--danger"

@@ -14,6 +14,7 @@ import PiecePreview from './components/PiecePreview.jsx';
 import Ranking from './components/Ranking.jsx';
 import Score from './components/Score.jsx';
 import Stats from './components/Stats.jsx';
+import ThemeMenu from './components/ThemeMenu.jsx';
 import UserBar from './components/UserBar.jsx';
 
 export default function App() {
@@ -81,12 +82,13 @@ export default function App() {
 
         <aside className="sidebar">
           <div className="sidebar__header">
+            <div className="sidebar__settings">
+              <ThemeMenu theme={theme} onChange={setTheme} />
+            </div>
             {auth.user && (
               <UserBar
                 nickname={auth.user.nickname}
                 username={auth.user.username}
-                theme={theme}
-                onThemeChange={setTheme}
                 onLogout={handleLogout}
               />
             )}
