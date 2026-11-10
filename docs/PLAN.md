@@ -10,8 +10,8 @@
 | 1 | 테트리스 (프론트엔드) | 완료 | `main` | 3~7일 |
 | 2 | Spring Boot 백엔드 (랭킹 API, 회원가입/로그인) | 완료 | `feature/backend-setup`, `feature/signup-login` | 3~5일 (2~3단계 합산) |
 | 3 | 프론트엔드 ↔ 백엔드 연결 | 완료 | `feature/ranking-integration` | (2단계에 포함) |
-| 4 | DB를 MySQL로 전환 | 다음 작업 | `feature/mysql-profile` | 1일 |
-| 5 | AWS EC2 배포 | 대기 | `chore/depoly-ec2` | 1~3일 |
+| 4 | DB를 MySQL로 전환 | 완료 | `feature/mysql-profile` | 1일 |
+| 5 | AWS EC2 배포 | 다음 작업 | `chore/depoly-ec2` | 1~3일 |
 | 6 | CI/CD 자동 배포 (선택) | 대기 | `ci/github-actions` | 선택 |
 
 - 단계를 끝내면 위 표의 상태를 바꾸고, 그날 한 일은 `docs/Update.md`, 바로 다음 할 일은 `docs/TODO.md`에 적는다.
@@ -71,7 +71,7 @@ src/main/java/com/example/tetris/
 └── dto/ScoreRequest.java, ScoreResponse.java
 src/main/resources/
 ├── static/          // 프론트 빌드 결과(front_end/dist)를 여기에
-└── application.yml
+└── application.properties (+ application-local / application-prod)
 ```
 
 ### 2-2. 랭킹 API
@@ -102,9 +102,16 @@ src/main/resources/
 
 ## 4단계: DB를 MySQL로 전환
 
-- [ ] `application.yml`을 프로필로 분리: `local` = H2, `prod` = MySQL
-- [ ] DB 비밀번호는 코드에 쓰지 않고 환경변수로 (`${DB_PASSWORD}`)
-- [ ] 로컬 MySQL(또는 Docker MySQL)로 테스트
+- [x] 설정을 프로필로 분리: `application-local.properties` = H2 (기본값), `application-prod.properties` = MySQL
+- [x] DB 비밀번호는 코드에 쓰지 않고 환경변수로 (`${DB_PASSWORD}`)
+- [x] 로컬 MySQL(이 PC의 MySQL 8.0)로 테스트 (서버를 껐다 켜도 계정과 랭킹 유지 확인)
+
+실행 방법 (`prod`):
+
+```powershell
+$env:DB_PASSWORD="비밀번호"
+.\gradlew bootRun --args='--spring.profiles.active=prod'
+```
 
 ## 5단계: AWS에 배포
 

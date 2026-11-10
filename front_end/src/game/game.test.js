@@ -71,7 +71,7 @@ describe('gameReducer', () => {
     expect(next.score).toBe(40 + 200);
   });
 
-  it('4줄을 한 번에 지우면 (4 * 200) * 5점을 더한다', () => {
+  it('4줄을 한 번에 지우면 (4 * 200) * 4점을 더한다', () => {
     const board = createBoard();
     for (let y = ROWS - 4; y < ROWS; y += 1) {
       board[y] = [...Array(COLS - 1).fill('Z'), null];
@@ -82,7 +82,7 @@ describe('gameReducer', () => {
     const next = gameReducer(state, { type: ACTIONS.HARD_DROP });
 
     expect(next.lines).toBe(4);
-    expect(next.score).toBe(40 + 4 * 200 * 5);
+    expect(next.score).toBe(40 + 4 * 200 * 4);
   });
 
   it('홀드는 블록이 고정되기 전까지 한 번만 쓸 수 있다', () => {
