@@ -1,0 +1,93 @@
+name: Build and Deploy
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: front_end/package-lock.json
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Frontend test
+        working-directory: front_end
+        run: |
+          npm ci
+          npm test
+
+      - name: Backend test and build JAR
+        working-directory: back_end
+        run: ./gradlew build
+
+      - name: Allow SSH from this runner
+        if: github.ref == 'refs/heads/main'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          SG_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
+        run: |
+          RUNNER_IP=$(curl -fsS https://checkip.amazonaws.com)
+          aws ec2 authorize-security-group-ingress \
+            --group-id "$SG_ID" --protocol tcp --port 22 --cidr "$RUNNER_IP/32"
+          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
+
+      - name: Upload JAR and restart service
+        if: github.ref == 'refs/heads/main'
+        env:
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+
+          JAR=$(ls back_end/build/libs/*.jar | grep -v -- '-plain.jar')
+          scp -i ~/.ssh/deploy_key "$JAR" "ubuntu@$HOST:/opt/tetris/app.jar.new"
+          ssh -i ~/.ssh/deploy_key "ubuntu@$HOST" \
+            'cp /opt/tetris/app.jar /opt/tetris/app.jar.bak && mv /opt/tetris/app.jar.new /opt/tetris/app.jar && sudo systemctl restart tetris'
+
+      - name: Check the site responds
+        if: github.ref == 'refs/heads/main'
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "https://$HOST/api/scores/top" > /dev/null; then
+              echo "배포 완료: https://$HOST"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "서버가 2분 30초 안에 응답하지 않았습니다"
+          exit 1
+
+      - name: Remove SSH access for this runner
+        if: always() && env.RUNNER_IP != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          SG_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id "$SG_ID" --protocol tcp --port 22 --cidr "$RUNNER_IP/32"

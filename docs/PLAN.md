@@ -134,7 +134,11 @@ $env:DB_PASSWORD="비밀번호"
 
 ## 6단계: 자동 배포 (CI/CD, 선택)
 
-- [ ] GitHub Actions: `main`에 push하면 빌드 → 테스트 → EC2로 JAR 전송 → 서비스 재시작
+- [ ] GitHub Actions: `main`에 push하면 빌드 → 테스트 → EC2로 JAR 전송 → 서비스 재시작 (`.github/workflows/deploy.yml`)
+  - 다른 브랜치에 push하면 테스트와 빌드만 한다
+  - SSH 22번은 배포하는 동안만 GitHub 서버 IP에 열고, 끝나면 닫는다 (IAM 사용자는 이 보안 그룹 규칙만 바꿀 수 있게 제한)
+  - 배포 전용 SSH 키를 따로 쓰고, 직전 JAR는 `/opt/tetris/app.jar.bak`으로 남긴다
+  - GitHub Secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `EC2_SECURITY_GROUP_ID`, `EC2_HOST`, `EC2_SSH_KEY`
 - 수동 배포를 한두 번 해본 다음에 붙이면 각 단계를 이해하기 쉽다.
 
 ---
