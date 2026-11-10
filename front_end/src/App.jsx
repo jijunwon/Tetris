@@ -56,7 +56,12 @@ export default function App() {
 
   return (
     <main className="app">
-      <h1 className="app__title">TETRIS</h1>
+      <header className="app__header">
+        <h1 className="app__title">TETRIS</h1>
+        <div className="app__settings">
+          <ThemeMenu theme={theme} onChange={setTheme} />
+        </div>
+      </header>
       <div className="layout">
         <aside className="sidebar">
           <div className="sidebar__header">
@@ -82,9 +87,6 @@ export default function App() {
 
         <aside className="sidebar">
           <div className="sidebar__header">
-            <div className="sidebar__settings">
-              <ThemeMenu theme={theme} onChange={setTheme} />
-            </div>
             {auth.user && (
               <UserBar
                 nickname={auth.user.nickname}

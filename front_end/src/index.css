@@ -94,6 +94,22 @@ body {
   padding: 16px;
 }
 
+/* 아래 레이아웃과 폭을 같게 늘려서, 제목은 가운데·톱니바퀴는 오른쪽 끝(로그아웃 버튼과 같은 세로줄)에 둔다 */
+.app__header {
+  position: relative;
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+}
+
+.app__settings {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+}
+
 .app__title {
   margin: 0;
   font-size: calc(1.6rem + 5pt);
@@ -495,14 +511,15 @@ body {
   cursor: pointer;
 }
 
-.theme-menu__item:hover,
-.theme-menu__item:focus-visible {
-  background: var(--accent-soft);
-}
-
 .theme-menu__item--active {
   font-weight: 700;
   color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.theme-menu__item:hover,
+.theme-menu__item:focus-visible {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .theme-menu__swatch {
@@ -610,18 +627,10 @@ body {
 
 /* 양쪽 사이드바의 첫 줄(SCORE / 닉네임)을 같은 높이로 맞춰서 HOLD와 NEXT가 같은 줄에서 시작하게 한다 */
 .sidebar__header {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   height: 48px;
-}
-
-/* 플레이어 카드 위 빈 공간에 띄워서 레이아웃을 밀지 않는다. right는 카드 안 로그아웃 버튼과 같은 세로줄 */
-.sidebar__settings {
-  position: absolute;
-  top: -23px;
-  right: 5px;
 }
 
 .score {
