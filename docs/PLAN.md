@@ -11,7 +11,7 @@
 | 2 | Spring Boot 백엔드 (랭킹 API, 회원가입/로그인) | 완료 | `feature/backend-setup`, `feature/signup-login` | 3~5일 (2~3단계 합산) |
 | 3 | 프론트엔드 ↔ 백엔드 연결 | 완료 | `feature/ranking-integration` | (2단계에 포함) |
 | 4 | DB를 MySQL로 전환 | 완료 | `feature/mysql-profile` | 1일 |
-| 5 | AWS EC2 배포 | 다음 작업 | `chore/depoly-ec2` | 1~3일 |
+| 5 | AWS EC2 배포 | 완료 (https://jijunwon-tetris.duckdns.org) | `chore/depoly-ec2` | 1~3일 |
 | 6 | CI/CD 자동 배포 (선택) | 대기 | `ci/github-actions` | 선택 |
 
 - 단계를 끝내면 위 표의 상태를 바꾸고, 그날 한 일은 `docs/Update.md`, 바로 다음 할 일은 `docs/TODO.md`에 적는다.
@@ -117,16 +117,16 @@ $env:DB_PASSWORD="비밀번호"
 
 ### 방법 A (추천, 처음이라면): EC2 한 대
 
-- [ ] EC2 인스턴스 생성: Ubuntu, t2.micro 또는 t3.micro(프리티어), 키페어(.pem) 다운로드
-- [ ] 보안 그룹: 22(SSH, 내 IP만 허용), 80/443(HTTP/HTTPS) 열기
-- [ ] SSH 접속 후 JDK 설치 (`sudo apt install openjdk-17-jdk` 등)
-- [ ] DB 준비: RDS MySQL 프리티어, 또는 비용 절감을 위해 EC2에 MySQL 직접 설치
-- [ ] JAR 업로드: `scp`로 복사하거나 서버에서 `git clone` 후 빌드
-- [ ] 실행: `java -jar -Dspring.profiles.active=prod app.jar`
-- [ ] systemd 서비스로 등록 (터미널을 닫아도 계속 실행)
-- [ ] Nginx 리버스 프록시: 80번 → 8080번
-- [ ] 탄력적 IP(Elastic IP) 연결 (재부팅해도 IP 고정)
-- [ ] (선택) 도메인 + HTTPS: Route 53이나 가비아에서 도메인 연결, Let's Encrypt(certbot)로 무료 HTTPS
+- [x] EC2 인스턴스 생성: Ubuntu 24.04, 프리티어, 키페어(.pem) 다운로드, 스왑 2GB
+- [x] 보안 그룹: 22(SSH, 내 IP만 허용), 80(HTTP) 열기
+- [x] SSH 접속 후 Java 21 설치 (`sudo apt install openjdk-21-jre-headless`, 이 프로젝트는 21 이상 필요)
+- [x] DB 준비: EC2에 MySQL 직접 설치, `tetris` DB와 사용자 생성
+- [x] JAR 업로드: 내 PC에서 빌드한 JAR를 `scp`로 `/opt/tetris/app.jar`에 복사 (서버는 메모리가 작아 빌드하지 않음)
+- [x] 실행: `java -jar /opt/tetris/app.jar --spring.profiles.active=prod`
+- [x] systemd 서비스로 등록 (`/etc/systemd/system/tetris.service`, 비밀번호는 `/etc/tetris/tetris.env`)
+- [x] Nginx 리버스 프록시: 80번 → 8080번 (`/etc/nginx/sites-available/tetris`)
+- [x] 탄력적 IP(Elastic IP) 연결 (재부팅해도 IP 고정, 서버를 지울 때 함께 해제)
+- [x] (선택) 도메인 + HTTPS: DuckDNS 무료 서브도메인 `jijunwon-tetris.duckdns.org`, Let's Encrypt(certbot)로 무료 HTTPS (자동 갱신, HTTP는 HTTPS로 리다이렉트)
 
 ### 방법 B (익숙해진 뒤에)
 

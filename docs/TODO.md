@@ -1,5 +1,5 @@
 # TODO
 
-- [ ] `feature/mysql-profile`을 커밋하고 `main`에 머지한다
-- [ ] 5단계: EC2 인스턴스 생성 (Ubuntu, 프리티어, 키페어 다운로드)
-- [x] 실패 중인 줄 삭제 점수 테스트 2개를 고친다 (`constants.test.js`, `game.test.js`)
+- [ ] 문서 변경(`docs/`)을 커밋하고 `main`에 푸시한다
+- [ ] (선택) 6단계: GitHub Actions로 `main`에 push하면 EC2에 자동 배포
+- [ ] 실습을 쉴 때는 EC2 인스턴스 중지, 끝낼 때는 인스턴스 삭제와 탄력적 IP 해제

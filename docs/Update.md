@@ -46,3 +46,24 @@
 - `bootJar`가 프론트를 빌드해 JAR 안의 `static/`에 넣도록 설정
 - 로그인 검사를 `/api/**`에만 적용해서 게임 페이지가 막히지 않게 수정
 - `.\gradlew build`로 만든 JAR 하나로 게임과 API가 함께 열리는 것을 확인
+
+
+## 2026-11-10
+
+### MySQL 전환
+- 설정을 `local`(H2, 기본값) / `prod`(MySQL) 프로필로 분리, MySQL 드라이버 추가
+- DB 비밀번호는 환경변수 `DB_PASSWORD`로만 받음
+- 로컬 MySQL 8.0에서 서버를 껐다 켜도 계정과 랭킹이 유지되는 것을 확인
+- 실패하던 줄 삭제 점수 테스트 2개 수정
+- `feature/ranking-integration`, `feature/mysql-profile`을 `main`에 머지하고 푸시
+
+### AWS EC2 배포
+- EC2 인스턴스 생성 (Ubuntu 24.04, 키페어, SSH는 내 IP만 / HTTP 허용)
+- 서버에 스왑 2GB, Java 21, MySQL 설치, `tetris` DB와 사용자 생성
+- 내 PC에서 빌드한 JAR를 `scp`로 `/opt/tetris/app.jar`에 복사
+- 서버에서 `prod` 프로필로 실행해 MySQL 연결과 `Started TetrisApplication` 확인
+- `systemd` 서비스로 등록 (비밀번호는 root만 읽는 `/etc/tetris/tetris.env`)
+- Nginx로 80번 → 8080번 연결, 브라우저에서 `http://서버IP`로 게임 접속 확인
+- 탄력적 IP를 연결해 서버 주소 고정
+- DuckDNS 무료 도메인 연결, 보안 그룹에 443 추가, certbot으로 HTTPS 적용
+- https://jijunwon-tetris.duckdns.org 에서 게임 접속 확인
