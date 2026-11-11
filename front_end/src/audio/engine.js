@@ -17,9 +17,15 @@ export function getAudio() {
     if (!AudioContextClass) return null;
 
     const context = new AudioContextClass();
+    // 여러 줄을 지울 때 효과음이 겹쳐도 소리가 찢어지지 않도록 마지막에 압축기를 둔다.
+    const compressor = context.createDynamicsCompressor();
+    compressor.threshold.value = -12;
+    compressor.ratio.value = 6;
+    compressor.connect(context.destination);
+
     const master = context.createGain();
     master.gain.value = MASTER_GAIN * masterVolume;
-    master.connect(context.destination);
+    master.connect(compressor);
 
     const music = context.createGain();
     music.gain.value = 0.35;
@@ -56,4 +62,33 @@ export function playTone(
   oscillator.start(start);
   oscillator.stop(start + duration + 0.02);
   return oscillator;
+}
+
+let noiseBuffer = null;
+
+// 짧은 잡음을 필터로 깎아서 '탁', '팡' 같은 타격음을 만든다.
+export function playNoise(
+  { context },
+  bus,
+  { start, duration, volume = 0.3, filter = 'highpass', frequency = 2000 },
+) {
+  if (!noiseBuffer) {
+    noiseBuffer = context.createBuffer(1, Math.ceil(context.sampleRate * 0.5), context.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+  }
+
+  const source = context.createBufferSource();
+  const biquad = context.createBiquadFilter();
+  const gain = context.createGain();
+
+  source.buffer = noiseBuffer;
+  biquad.type = filter;
+  biquad.frequency.value = frequency;
+  gain.gain.setValueAtTime(volume, start);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+  source.connect(biquad).connect(gain).connect(bus);
+  source.start(start);
+  source.stop(start + duration + 0.02);
 }

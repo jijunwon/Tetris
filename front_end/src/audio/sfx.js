@@ -1,10 +1,12 @@
-import { getAudio, playTone } from './engine.js';
+import { getAudio, playNoise, playTone } from './engine.js';
 import { noteToFrequency } from './notes.js';
 
 const LINE_CLEAR_URL = `${import.meta.env.BASE_URL}sounds/line-clear.mp3`;
-const LINE_CLEAR_VOLUME = 0.7;
-// 지운 줄 수만큼 이 간격으로 이어서 울린다. 파일 하나가 1.5초 정도라 끝까지 기다리지 않고 겹쳐 붙인다.
-const LINE_CLEAR_GAP = 0.12;
+const LINE_CLEAR_VOLUME = 0.6;
+// 지운 줄 수만큼 효과음을 거의 동시에 겹쳐서 한 번의 두꺼운 '팡!'으로 만든다.
+// 같은 음이 겹치면 뭉개지므로 줄마다 재생 속도(음높이)를 조금씩 다르게 한다.
+const LINE_CLEAR_GAP = 0.03;
+const LINE_CLEAR_RATES = [1, 0.94, 1.07, 0.89];
 
 const CLEAR_ARPEGGIO = ['C6', 'E6', 'G6', 'C7'];
 const TSPIN_ARPEGGIO = ['A5', 'C6', 'E6', 'A6'];
@@ -30,10 +32,11 @@ export function preloadSounds() {
     });
 }
 
-function playBuffer(audio, buffer, { start, volume }) {
+function playBuffer(audio, buffer, { start, volume, rate = 1 }) {
   const source = audio.context.createBufferSource();
   const gain = audio.context.createGain();
   source.buffer = buffer;
+  source.playbackRate.value = rate;
   gain.gain.value = volume;
   source.connect(gain).connect(audio.effects);
   source.start(start);
@@ -75,21 +78,51 @@ const SOUNDS = {
     }),
   lock: (audio, now) =>
     playTone(audio, audio.effects, { frequency: 150, start: now, duration: 0.07, type: 'triangle', volume: 0.3 }),
-  hardDrop: (audio, now) =>
+  // 높은 '틱' + 빠르게 떨어지는 '슉' + 가벼운 바닥 소리로 경쾌하게
+  hardDrop: (audio, now) => {
+    playNoise(audio, audio.effects, { start: now, duration: 0.035, volume: 0.35, frequency: 3000 });
     playTone(audio, audio.effects, {
-      frequency: 220,
-      slideTo: 55,
+      frequency: 1400,
+      slideTo: 420,
       start: now,
-      duration: 0.15,
+      duration: 0.06,
+      type: 'square',
+      volume: 0.07,
+    });
+    playTone(audio, audio.effects, {
+      frequency: 180,
+      slideTo: 110,
+      start: now + 0.01,
+      duration: 0.06,
       type: 'triangle',
-      volume: 0.5,
-    }),
-  // 줄을 지우면 지운 줄 수만큼 효과음 파일을 틀고, 아직 못 받았거나 줄 없는 T-스핀이면 합성음으로 대신한다.
+      volume: 0.18,
+    });
+  },
+  // 줄을 지우면 짧은 타격음 위에 효과음 파일을 지운 줄 수만큼 겹쳐 '팡!' 하고 터뜨린다.
+  // 파일을 아직 못 받았거나 줄 없는 T-스핀이면 합성음으로 대신한다.
   // 합성음은 지운 줄 수만큼 음이 올라가고, 콤보가 이어질수록 한 음씩 높아진다.
   clear: (audio, now, { cleared, tSpin, combo }) => {
     if (cleared > 0 && lineClearBuffer) {
+      playNoise(audio, audio.effects, {
+        start: now,
+        duration: 0.08 + cleared * 0.03,
+        volume: 0.2 + cleared * 0.06,
+        frequency: 1200,
+      });
+      playTone(audio, audio.effects, {
+        frequency: 200,
+        slideTo: 70,
+        start: now,
+        duration: 0.12,
+        type: 'triangle',
+        volume: 0.15 + cleared * 0.05,
+      });
       for (let i = 0; i < cleared; i += 1) {
-        playBuffer(audio, lineClearBuffer, { start: now + i * LINE_CLEAR_GAP, volume: LINE_CLEAR_VOLUME });
+        playBuffer(audio, lineClearBuffer, {
+          start: now + i * LINE_CLEAR_GAP,
+          volume: LINE_CLEAR_VOLUME,
+          rate: LINE_CLEAR_RATES[i % LINE_CLEAR_RATES.length],
+        });
       }
       return;
     }
