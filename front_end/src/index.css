@@ -21,6 +21,9 @@
   --piece-J: #3b82f6;
   --piece-L: #f97316;
   --piece-G: #6b7280;
+  --rank-gold: #facc15;
+  --rank-silver: #cbd5e1;
+  --rank-bronze: #f59e5b;
 
   font-family: 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
   color: var(--text);
@@ -49,6 +52,10 @@
   --piece-J: #5f86cf;
   --piece-L: #df8f55;
   --piece-G: #9aa3af;
+  /* 밝은 배경에서도 읽히도록 메달 색을 진하게 */
+  --rank-gold: #b7791f;
+  --rank-silver: #64748b;
+  --rank-bronze: #9c4a1a;
 }
 
 :root[data-theme='light'] .cell--filled {
@@ -68,6 +75,15 @@
   --accent-soft: rgb(255 43 214 / 0.14);
   --cell-empty: #0a0216;
   --overlay-bg: rgb(7 1 15 / 0.82);
+  --rank-gold: #ffe14d;
+  --rank-silver: #e2e8f0;
+  --rank-bronze: #ff9f5a;
+}
+
+:root[data-theme='neon'] .ranking__item--gold,
+:root[data-theme='neon'] .ranking__item--silver,
+:root[data-theme='neon'] .ranking__item--bronze {
+  text-shadow: 0 0 6px var(--medal);
 }
 
 :root[data-theme='neon'] .app__title,
@@ -753,8 +769,15 @@ body {
 }
 
 .ranking__rank {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
   width: 1em;
   color: var(--text-muted);
+}
+
+.ranking__crown {
+  display: block;
 }
 
 .ranking__name {
@@ -774,6 +797,45 @@ body {
 .ranking__item--latest .ranking__name,
 .ranking__item--latest .ranking__score {
   color: var(--accent);
+}
+
+/* 1~3위는 메달 색. 방금 세운 기록이 1~3위면 메달 색은 유지하고 굵게만 표시한다 */
+.ranking__item--gold {
+  --medal: var(--rank-gold);
+}
+
+.ranking__item--silver {
+  --medal: var(--rank-silver);
+}
+
+.ranking__item--bronze {
+  --medal: var(--rank-bronze);
+}
+
+/* 은색은 기본 글자색과 비슷해서 줄 배경도 메달 색으로 옅게 깔아 구분한다 */
+.ranking__item--gold,
+.ranking__item--silver,
+.ranking__item--bronze {
+  margin: 0 -6px;
+  padding: 1px 6px;
+  background: color-mix(in srgb, var(--medal) 14%, transparent);
+  border-radius: 4px;
+}
+
+.ranking__item--gold .ranking__rank,
+.ranking__item--gold .ranking__name,
+.ranking__item--gold .ranking__score,
+.ranking__item--silver .ranking__rank,
+.ranking__item--silver .ranking__name,
+.ranking__item--silver .ranking__score,
+.ranking__item--bronze .ranking__rank,
+.ranking__item--bronze .ranking__name,
+.ranking__item--bronze .ranking__score {
+  color: var(--medal);
+}
+
+.ranking__item--latest {
+  font-weight: 700;
 }
 
 .ranking__empty {

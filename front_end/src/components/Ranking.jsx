@@ -1,5 +1,31 @@
 import Panel from './Panel.jsx';
 
+const MEDAL_CLASSES = ['ranking__item--gold', 'ranking__item--silver', 'ranking__item--bronze'];
+
+function getItemClass(index, isLatest) {
+  const classes = ['ranking__item'];
+  if (MEDAL_CLASSES[index]) classes.push(MEDAL_CLASSES[index]);
+  if (isLatest) classes.push('ranking__item--latest');
+  return classes.join(' ');
+}
+
+function Crown() {
+  return (
+    <svg
+      className="ranking__crown"
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="currentColor"
+      role="img"
+      aria-label="1위"
+    >
+      <path d="M3 7.5 7.5 11 12 4l4.5 7L21 7.5 19 18H5L3 7.5Z" />
+      <rect x="5" y="19.5" width="14" height="2" rx="1" />
+    </svg>
+  );
+}
+
 export default function Ranking({ ranking, failed, latestId }) {
   let body;
   if (failed) {
@@ -10,11 +36,8 @@ export default function Ranking({ ranking, failed, latestId }) {
     body = (
       <ol className="ranking">
         {ranking.map((entry, index) => (
-          <li
-            key={entry.id}
-            className={entry.id === latestId ? 'ranking__item ranking__item--latest' : 'ranking__item'}
-          >
-            <span className="ranking__rank">{index + 1}</span>
+          <li key={entry.id} className={getItemClass(index, entry.id === latestId)}>
+            <span className="ranking__rank">{index === 0 ? <Crown /> : index + 1}</span>
             <span className="ranking__name">{entry.nickname ?? entry.username}</span>
             <span className="ranking__score">{entry.score.toLocaleString()}</span>
           </li>
