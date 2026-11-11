@@ -1,14 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { STATUS } from '../game/constants.js';
+import { setMasterVolume } from '../audio/engine.js';
 import { getMusicTempo } from '../audio/korobeiniki.js';
 import { createMusicPlayer } from '../audio/music.js';
 import { playSound } from '../audio/sfx.js';
 import { getSoundEvents } from '../audio/soundEvents.js';
 
-export function useGameAudio(state, { music, effects }) {
+export function useGameAudio(state, { music, effects, volume, muted }) {
   const previous = useRef(state);
   const player = useRef(null);
   if (!player.current) player.current = createMusicPlayer();
+
+  useEffect(() => {
+    setMasterVolume(muted ? 0 : volume);
+  }, [volume, muted]);
 
   useEffect(() => {
     const prev = previous.current;

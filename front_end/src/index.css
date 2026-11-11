@@ -146,6 +146,73 @@ body {
   align-items: center;
 }
 
+.app__volume {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+}
+
+/* 음표 버튼에 마우스를 올리거나 슬라이더에 포커스가 있으면 오른쪽에 볼륨 바가 나온다 */
+.volume {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.volume__panel {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-4px, -50%);
+  transition:
+    opacity 0.12s,
+    transform 0.12s,
+    visibility 0.12s;
+}
+
+/* 버튼과 볼륨 바 사이 틈을 지날 때 마우스가 빠져 바가 닫히지 않도록 보이지 않는 다리를 놓는다 */
+.volume__panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+}
+
+.volume:hover .volume__panel,
+.volume:focus-within .volume__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(4px, -50%);
+}
+
+.volume__slider {
+  width: 96px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.volume__value {
+  min-width: 2ch;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--text-muted);
+}
+
 .app__settings {
   position: absolute;
   top: 50%;

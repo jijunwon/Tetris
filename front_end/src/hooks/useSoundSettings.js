@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'tetris-sound';
-const DEFAULT_SETTINGS = { music: true, effects: true };
+const DEFAULT_SETTINGS = { music: true, effects: true, volume: 0.8, muted: false };
 
 function loadSettings() {
   try {
@@ -27,5 +27,10 @@ export function useSoundSettings() {
     setSettings((current) => ({ ...current, [key]: !current[key] }));
   }, []);
 
-  return [settings, toggle];
+  // 음소거 중에 볼륨을 움직이면 음소거도 풀린다.
+  const setVolume = useCallback((volume) => {
+    setSettings((current) => ({ ...current, volume, muted: false }));
+  }, []);
+
+  return [settings, toggle, setVolume];
 }

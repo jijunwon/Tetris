@@ -21,6 +21,7 @@ import Score from './components/Score.jsx';
 import Stats from './components/Stats.jsx';
 import SettingsMenu from './components/SettingsMenu.jsx';
 import UserBar from './components/UserBar.jsx';
+import VolumeControl from './components/VolumeControl.jsx';
 
 export default function App() {
   const auth = useAuth();
@@ -37,7 +38,7 @@ export default function App() {
     state.lines,
   );
   const boardRef = useBoardShake(state.hardDropCount, state.lastClear);
-  const [sound, toggleSound] = useSoundSettings();
+  const [sound, toggleSound, setVolume] = useSoundSettings();
   useGameAudio(state, sound);
 
   const openRestartConfirm = () => {
@@ -98,6 +99,14 @@ export default function App() {
   return (
     <main className="app">
       <header className="app__header">
+        <div className="app__volume">
+          <VolumeControl
+            volume={sound.volume}
+            muted={sound.muted}
+            onToggleMute={() => toggleSound('muted')}
+            onVolumeChange={setVolume}
+          />
+        </div>
         <h1 className="app__title">TETRIS</h1>
         <div className="app__settings">
           <RestartButton
