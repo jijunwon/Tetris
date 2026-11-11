@@ -27,8 +27,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // 닉네임 칸이 생기기 전에 가입한 계정은 null이라 nullable로 둔다.
-    @Column(length = 12)
+    // 닉네임 칸이 생기기 전에 가입한 계정은 null이라 nullable로 둔다. null끼리는 unique에 걸리지 않는다.
+    @Column(length = 12, unique = true)
     private String nickname;
 
     private LocalDateTime createdAt;

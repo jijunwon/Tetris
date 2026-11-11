@@ -4,6 +4,7 @@ import com.example.tetris.domain.User;
 import com.example.tetris.dto.LoginRequest;
 import com.example.tetris.dto.SignupRequest;
 import com.example.tetris.dto.UserResponse;
+import com.example.tetris.exception.DuplicateNicknameException;
 import com.example.tetris.exception.DuplicateUsernameException;
 import com.example.tetris.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,10 +34,14 @@ public class AuthService {
         if (userRepository.existsByUsername(request.username())) {
             throw new DuplicateUsernameException("이미 사용 중인 아이디입니다.");
         }
+        String nickname = request.nickname().strip();
+        if (userRepository.existsByNickname(nickname)) {
+            throw new DuplicateNicknameException("이미 사용 중인 닉네임입니다.");
+        }
         User user = userRepository.save(new User(
                 request.username(),
                 passwordEncoder.encode(request.password()),
-                request.nickname().strip()));
+                nickname));
         return UserResponse.from(user);
     }
 

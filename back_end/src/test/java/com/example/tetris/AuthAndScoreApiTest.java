@@ -53,6 +53,20 @@ class AuthAndScoreApiTest {
     }
 
     @Test
+    void signupRejectsDuplicateNicknameEvenWithSurroundingSpaces() throws Exception {
+        signup("테트리스왕", "player", "secret")
+                .andExpect(status().isCreated());
+
+        signup("테트리스왕", "other", "secret")
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이미 사용 중인 닉네임입니다."));
+        signup(" 테트리스왕 ", "other", "secret")
+                .andExpect(status().isConflict());
+
+        assertThat(userRepository.existsByUsername("other")).isFalse();
+    }
+
+    @Test
     void loginThenSaveScoreRequiresSessionAndShowsNickname() throws Exception {
         signup("테트리스왕", "player", "secret")
                 .andExpect(status().isCreated());
