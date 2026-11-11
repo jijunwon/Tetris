@@ -2,7 +2,9 @@ import { getAudio, playTone } from './engine.js';
 import { noteToFrequency } from './notes.js';
 
 const LINE_CLEAR_URL = `${import.meta.env.BASE_URL}sounds/line-clear.mp3`;
-const LINE_CLEAR_VOLUME = 0.8;
+const LINE_CLEAR_VOLUME = 0.7;
+// 지운 줄 수만큼 이 간격으로 이어서 울린다. 파일 하나가 1.5초 정도라 끝까지 기다리지 않고 겹쳐 붙인다.
+const LINE_CLEAR_GAP = 0.12;
 
 const CLEAR_ARPEGGIO = ['C6', 'E6', 'G6', 'C7'];
 const TSPIN_ARPEGGIO = ['A5', 'C6', 'E6', 'A6'];
@@ -82,11 +84,13 @@ const SOUNDS = {
       type: 'triangle',
       volume: 0.5,
     }),
-  // 줄을 지우면 효과음 파일을 틀고, 아직 못 받았거나 줄 없는 T-스핀이면 합성음으로 대신한다.
+  // 줄을 지우면 지운 줄 수만큼 효과음 파일을 틀고, 아직 못 받았거나 줄 없는 T-스핀이면 합성음으로 대신한다.
   // 합성음은 지운 줄 수만큼 음이 올라가고, 콤보가 이어질수록 한 음씩 높아진다.
   clear: (audio, now, { cleared, tSpin, combo }) => {
     if (cleared > 0 && lineClearBuffer) {
-      playBuffer(audio, lineClearBuffer, { start: now, volume: LINE_CLEAR_VOLUME });
+      for (let i = 0; i < cleared; i += 1) {
+        playBuffer(audio, lineClearBuffer, { start: now + i * LINE_CLEAR_GAP, volume: LINE_CLEAR_VOLUME });
+      }
       return;
     }
     arpeggio(audio, (tSpin ? TSPIN_ARPEGGIO : CLEAR_ARPEGGIO).slice(0, Math.max(1, cleared)), {
