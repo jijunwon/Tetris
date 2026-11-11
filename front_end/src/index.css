@@ -541,11 +541,11 @@ body {
 }
 
 /* Theme menu */
-.theme-menu {
+.settings-menu {
   position: relative;
 }
 
-.theme-menu__list {
+.settings-menu__list {
   position: absolute;
   top: calc(100% + 6px);
   right: -5px;
@@ -561,14 +561,52 @@ body {
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
 }
 
-.theme-menu__title {
+.settings-menu__title {
   padding: 0 6px 4px;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   color: var(--text-muted);
 }
 
-.theme-menu__item {
+.settings-menu__title--section {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* 음악·효과음 켜기/끄기 스위치 */
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 16px;
+  margin-left: auto;
+  background: var(--border);
+  border-radius: 999px;
+  transition: background 0.15s;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+
+.switch--on {
+  background: var(--accent);
+}
+
+.switch--on::after {
+  transform: translateX(12px);
+}
+
+.settings-menu__item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -583,33 +621,33 @@ body {
   cursor: pointer;
 }
 
-.theme-menu__item--active {
+.settings-menu__item--active {
   font-weight: 700;
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
-.theme-menu__item:hover,
-.theme-menu__item:focus-visible {
+.settings-menu__item:hover,
+.settings-menu__item:focus-visible {
   background: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-.theme-menu__swatch {
+.settings-menu__swatch {
   width: 14px;
   height: 14px;
   border: 1px solid var(--border);
   border-radius: 3px;
 }
 
-.theme-menu__swatch--light {
+.settings-menu__swatch--light {
   background: linear-gradient(135deg, #f8fafc 50%, #0284c7 50%);
 }
 
-.theme-menu__swatch--dark {
+.settings-menu__swatch--dark {
   background: linear-gradient(135deg, #0f172a 50%, #38bdf8 50%);
 }
 
-.theme-menu__swatch--neon {
+.settings-menu__swatch--neon {
   background: linear-gradient(135deg, #0a0118 50%, #ff2bd6 50%);
   box-shadow: 0 0 6px #ff2bd6;
 }

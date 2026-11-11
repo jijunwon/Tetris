@@ -4,6 +4,8 @@ import { useTetris } from './hooks/useTetris.js';
 import { useRanking } from './hooks/useRanking.js';
 import { useBoardShake } from './hooks/useBoardShake.js';
 import { useTheme } from './hooks/useTheme.js';
+import { useGameAudio } from './hooks/useGameAudio.js';
+import { useSoundSettings } from './hooks/useSoundSettings.js';
 import { NEXT_PREVIEW_COUNT, STATUS } from './game/constants.js';
 import AuthForm from './components/AuthForm.jsx';
 import Board from './components/Board.jsx';
@@ -17,7 +19,7 @@ import RestartButton from './components/RestartButton.jsx';
 import RestartConfirm from './components/RestartConfirm.jsx';
 import Score from './components/Score.jsx';
 import Stats from './components/Stats.jsx';
-import ThemeMenu from './components/ThemeMenu.jsx';
+import SettingsMenu from './components/SettingsMenu.jsx';
 import UserBar from './components/UserBar.jsx';
 
 export default function App() {
@@ -35,6 +37,8 @@ export default function App() {
     state.lines,
   );
   const boardRef = useBoardShake(state.hardDropCount, state.lastClear);
+  const [sound, toggleSound] = useSoundSettings();
+  useGameAudio(state, sound);
 
   const openRestartConfirm = () => {
     if (state.status === STATUS.PLAYING) {
@@ -100,7 +104,12 @@ export default function App() {
             disabled={!auth.user || state.status === STATUS.READY || confirmingRestart}
             onClick={openRestartConfirm}
           />
-          <ThemeMenu theme={theme} onChange={setTheme} />
+          <SettingsMenu
+            theme={theme}
+            onThemeChange={setTheme}
+            sound={sound}
+            onToggleSound={toggleSound}
+          />
         </div>
       </header>
       <div className="layout">

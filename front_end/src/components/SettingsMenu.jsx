@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { THEMES } from '../theme.js';
 
-export default function ThemeMenu({ theme, onChange }) {
+const SOUND_OPTIONS = [
+  { key: 'music', label: '음악' },
+  { key: 'effects', label: '효과음' },
+];
+
+export default function SettingsMenu({ theme, onThemeChange, sound, onToggleSound }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
 
@@ -26,21 +31,21 @@ export default function ThemeMenu({ theme, onChange }) {
     };
   }, [open]);
 
-  const select = (id) => {
-    onChange(id);
+  const selectTheme = (id) => {
+    onThemeChange(id);
     setOpen(false);
   };
 
   return (
-    <div className="theme-menu" ref={rootRef}>
+    <div className="settings-menu" ref={rootRef}>
       <button
         type="button"
         className="icon-button"
         onClick={() => setOpen((value) => !value)}
-        aria-label="테마 설정"
+        aria-label="설정"
         aria-haspopup="menu"
         aria-expanded={open}
-        title="테마 설정"
+        title="설정"
       >
         <svg
           viewBox="0 0 24 24"
@@ -58,8 +63,8 @@ export default function ThemeMenu({ theme, onChange }) {
         </svg>
       </button>
       {open && (
-        <div className="theme-menu__list" role="menu" aria-label="테마">
-          <span className="theme-menu__title">THEME</span>
+        <div className="settings-menu__list" role="menu" aria-label="설정">
+          <span className="settings-menu__title">THEME</span>
           {THEMES.map(({ id, label }) => (
             <button
               key={id}
@@ -67,12 +72,35 @@ export default function ThemeMenu({ theme, onChange }) {
               role="menuitemradio"
               aria-checked={theme === id}
               className={
-                theme === id ? 'theme-menu__item theme-menu__item--active' : 'theme-menu__item'
+                theme === id
+                  ? 'settings-menu__item settings-menu__item--active'
+                  : 'settings-menu__item'
               }
-              onClick={() => select(id)}
+              onClick={() => selectTheme(id)}
             >
-              <span className={`theme-menu__swatch theme-menu__swatch--${id}`} aria-hidden="true" />
+              <span
+                className={`settings-menu__swatch settings-menu__swatch--${id}`}
+                aria-hidden="true"
+              />
               {label}
+            </button>
+          ))}
+
+          <span className="settings-menu__title settings-menu__title--section">SOUND</span>
+          {SOUND_OPTIONS.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              role="menuitemcheckbox"
+              aria-checked={sound[key]}
+              className="settings-menu__item"
+              onClick={() => onToggleSound(key)}
+            >
+              {label}
+              <span
+                className={sound[key] ? 'switch switch--on' : 'switch'}
+                aria-hidden="true"
+              />
             </button>
           ))}
         </div>
