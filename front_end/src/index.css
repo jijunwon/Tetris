@@ -199,10 +199,70 @@ body {
   transform: translate(4px, -50%);
 }
 
+/* 볼륨 바: 실선 위에 동그란 손잡이. --fill(현재 볼륨 %)까지는 강조색으로 채운다 */
 .volume__slider {
-  width: 96px;
-  accent-color: var(--accent);
+  width: 100px;
+  height: 18px;
+  margin: 0;
+  background: transparent;
   cursor: pointer;
+  appearance: none;
+}
+
+.volume__slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--fill),
+    color-mix(in srgb, var(--text-muted) 40%, transparent) var(--fill)
+  );
+  border-radius: 999px;
+}
+
+.volume__slider::-moz-range-track {
+  height: 4px;
+  background: color-mix(in srgb, var(--text-muted) 40%, transparent);
+  border-radius: 999px;
+}
+
+.volume__slider::-moz-range-progress {
+  height: 4px;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+.volume__slider::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--accent), 0 1px 3px rgb(0 0 0 / 0.3);
+  appearance: none;
+  transition: transform 0.1s;
+}
+
+.volume__slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--accent), 0 1px 3px rgb(0 0 0 / 0.3);
+}
+
+.volume__slider:hover::-webkit-slider-thumb,
+.volume__slider:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.volume__slider:focus-visible {
+  outline: none;
+}
+
+.volume__slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent);
 }
 
 .volume__value {

@@ -3,7 +3,7 @@ import { STATUS } from '../game/constants.js';
 import { setMasterVolume } from '../audio/engine.js';
 import { getMusicTempo } from '../audio/korobeiniki.js';
 import { createMusicPlayer } from '../audio/music.js';
-import { playSound } from '../audio/sfx.js';
+import { playSound, preloadSounds } from '../audio/sfx.js';
 import { getSoundEvents } from '../audio/soundEvents.js';
 
 export function useGameAudio(state, { music, effects, volume, muted }) {
@@ -31,6 +31,7 @@ export function useGameAudio(state, { music, effects, volume, muted }) {
   }, [state.level]);
 
   useEffect(() => {
+    if (state.status === STATUS.PLAYING) preloadSounds();
     if (music && state.status === STATUS.PLAYING) player.current.play();
     else player.current.pause();
   }, [music, state.status, state.gameId]);

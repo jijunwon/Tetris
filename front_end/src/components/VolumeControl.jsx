@@ -43,6 +43,7 @@ export default function VolumeControl({ volume, muted, onToggleMute, onVolumeCha
           max="100"
           step="5"
           value={muted ? 0 : percent}
+          style={{ '--fill': `${muted ? 0 : percent}%` }}
           onChange={(event) => onVolumeChange(Number(event.target.value) / 100)}
           // 슬라이더에 포커스가 남으면 방향키가 블록 대신 볼륨을 움직이므로, 마우스로 놓으면 포커스를 뺀다.
           onPointerUp={(event) => event.currentTarget.blur()}
