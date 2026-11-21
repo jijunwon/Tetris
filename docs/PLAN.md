@@ -13,6 +13,8 @@
 | 4 | DB를 MySQL로 전환 | 완료 | `feature/mysql-profile` | 1일 |
 | 5 | AWS EC2 배포 | 완료 (https://jijunwon-tetris.duckdns.org) | `chore/depoly-ec2` | 1~3일 |
 | 6 | CI/CD 자동 배포 (선택) | 완료 | `ci/github-actions` | 선택 |
+| 7 | 트래픽 관리 · 실시간 랭킹 | 예정 | `feature/traffic`, `feature/realtime-ranking` | 3~5일 |
+| 8 | 확장 · 운영 심화 (포트폴리오용) | 추후 | 항목별로 | 골라서 |
 
 - 단계를 끝내면 위 표의 상태를 바꾸고, 그날 한 일은 `docs/Update.md`, 바로 다음 할 일은 `docs/TODO.md`에 적는다.
 
@@ -140,6 +142,79 @@ $env:DB_PASSWORD="비밀번호"
   - 배포 전용 SSH 키를 따로 쓰고, 직전 JAR는 `/opt/tetris/app.jar.bak`으로 남긴다
   - GitHub Secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `EC2_SECURITY_GROUP_ID`, `EC2_HOST`, `EC2_SSH_KEY`
 - 수동 배포를 한두 번 해본 다음에 붙이면 각 단계를 이해하기 쉽다.
+
+## 7단계: 트래픽 관리 · 실시간 랭킹
+
+지금은 EC2 한 대(Nginx + Spring Boot + MySQL)에 랭킹은 새로고침하거나 내 게임이 끝날 때만 갱신된다.
+**재고 → 막고 → 줄이고 → 실시간으로 → 효과를 숫자로 확인** 순서로 진행한다. 개선 전후 수치를 남겨 두면 포트폴리오에 그대로 쓸 수 있다.
+
+### 7-1. 측정 (모니터링)
+
+- [x] CloudWatch 경보: EC2 CPU 80% 이상, 상태 검사 실패 시 메일 (SNS `tetris-alerts`)
+- [ ] Spring Boot Actuator + Micrometer: 요청 수, 응답 시간, JVM 메모리 (`/actuator/health`만 공개, 나머지는 서버 안에서만)
+- [ ] Nginx 접근 로그 분석: GoAccess로 접속 수, 많이 불린 주소, 응답 시간 보기
+
+### 7-2. 과도한 요청 막기 (Rate limiting)
+
+- [x] Nginx `limit_req`: `/api/auth/login`(무차별 대입 방지), `/api/auth/signup`, `/api/scores`(랭킹 도배 방지)에 IP당 요청 수 제한, 넘으면 429 (`deploy/nginx/`)
+- [x] 프론트에서 429 응답이면 "잠시 후 다시 시도" 안내
+- [ ] (선택) 앱 안에서도 제한: Bucket4j로 사용자(아이디)별 제한, Nginx 앞단 제한과 차이 정리
+- [x] EC2에 `deploy/nginx/` 설정을 복사하고 `nginx -t` 후 reload
+
+### 7-3. 부하 줄이기 (압축 · 캐시)
+
+- [x] Nginx gzip: JS·CSS 전송량 줄이기 (`deploy/nginx/tetris.conf`)
+- [x] 정적 파일 캐시 헤더: 파일 이름에 해시가 붙은 빌드 결과는 1년 캐시, `index.html`은 캐시하지 않음
+- [x] 랭킹 조회 캐시: Spring Cache(`@Cacheable`, Caffeine)로 상위 랭킹을 저장해 두고, 점수가 저장되면 비움(`@CacheEvict`)
+
+### 7-4. 실시간 랭킹
+
+- [ ] 탭으로 돌아오면 랭킹 다시 불러오기 (`visibilitychange`), 서버 연결이 안 될 때를 위한 폴링(30초)은 대비책으로
+- [ ] SSE(Server-Sent Events): `GET /api/scores/stream`, 누가 점수를 저장하면 접속자 전원에게 새 랭킹을 보냄 (`SseEmitter`)
+- [ ] Nginx에서 SSE 경로는 버퍼링 끄기(`proxy_buffering off`)와 긴 타임아웃
+- [ ] 랭킹이 바뀌면 화면에서 바뀐 줄을 잠깐 강조
+
+### 7-5. 부하 테스트로 효과 확인
+
+- [x] k6 스크립트: 랭킹 조회를 가짜 접속자 수십 명으로 호출 (`load-test/ranking-get.js`). 로그인·점수 저장 시나리오는 개선 후 비교 때 추가
+- [x] 운영 서버가 아니라 로컬에서 실행 (개선 전 기준: `load-test/results/baseline-ranking.md`)
+- [x] 캐시 적용 전후 초당 처리 수, 응답 시간(p95), 오류율 표 (`load-test/results/comparison.md`)
+
+## 8단계: 확장 · 운영 심화 (추후, 포트폴리오용)
+
+7단계를 끝낸 뒤 골라서 한다. 💰 표시는 AWS 프리티어를 넘으면 요금이 생길 수 있는 항목이다.
+
+### DB와 배포
+
+- [ ] **Flyway로 DB 마이그레이션**: `ddl-auto=update` 대신 버전이 붙은 SQL로 스키마를 관리 (2026-11-11에 운영 DB를 손으로 정리한 일을 다시 하지 않게)
+- [ ] **Docker / docker compose**: 앱과 MySQL을 컨테이너로 (5단계 방법 B), 로컬에서도 같은 환경으로 실행
+- [ ] **무중단 배포**: 새 버전을 다른 포트로 띄우고 헬스 체크 후 Nginx가 가리키는 곳을 바꾸는 블루-그린 배포
+
+### Redis
+
+- [ ] **랭킹을 Redis Sorted Set으로**: `ZADD`/`ZREVRANGE`로 순위 계산, MySQL은 기록 보관용 (실시간 랭킹 서비스의 대표적인 구조)
+- [ ] **세션 저장소를 Redis로**: Spring Session + Redis, 서버가 여러 대여도 로그인이 유지됨 (수평 확장의 전제 조건)
+
+### 수평 확장 💰
+
+- [ ] DB를 EC2에서 떼어 RDS로
+- [ ] ALB(로드 밸런서) + Auto Scaling 그룹: 트래픽에 따라 서버 대수 자동 조절, 7-5 부하 테스트로 늘어나는 모습 확인
+- [ ] CloudFront(CDN): 정적 파일을 전 세계 캐시 서버에서 내보내기
+
+### 관측 (Observability)
+
+- [ ] Prometheus + Grafana 대시보드: 7-1의 Micrometer 수치를 그래프로
+- [ ] 구조화 로그(JSON)와 요청 ID: 요청 하나를 Nginx → 앱 로그까지 따라가기
+
+### 게임 기능
+
+- [ ] **실시간 대전 (WebSocket / STOMP)**: 방 만들기·참가, 상대 보드 보기, 줄을 지우면 상대에게 방해 줄 보내기
+- [ ] **점수 조작 방지**: 지금은 클라이언트가 보낸 점수를 그대로 저장한다. 게임 시드와 입력 기록을 서버로 보내 서버에서 다시 계산해 검증하거나, 최소한 시간당 최대 점수 같은 상식선 검사 추가
+
+### 테스트
+
+- [ ] Testcontainers: 백엔드 통합 테스트를 H2 대신 실제 MySQL 컨테이너로
+- [ ] Playwright E2E: 계정 생성 → 게임 → 랭킹 반영까지 브라우저로 자동 확인, CI에서 실행
 
 ---
 

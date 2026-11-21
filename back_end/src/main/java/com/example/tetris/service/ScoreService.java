@@ -8,6 +8,8 @@ import com.example.tetris.repository.ScoreRepository;
 import com.example.tetris.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ScoreService {
 
+    public static final String TOP_SCORES_CACHE = "topScores";
+
     private final ScoreRepository scoreRepository;
     private final UserRepository userRepository;
 
     @Transactional
+    @CacheEvict(cacheNames = TOP_SCORES_CACHE, allEntries = true)
     public ScoreResponse save(ScoreRequest request, String username) {
         User user = userRepository.findByUsername(username).orElseThrow();
         Score saved = scoreRepository.save(new Score(user, request.score(), request.clearedLines()));
         return ScoreResponse.from(saved);
     }
 
+    @Cacheable(cacheNames = TOP_SCORES_CACHE, key = "#limit")
     public List<ScoreResponse> getTop(int limit) {
         int size = Math.clamp(limit, 1, 100);
         return scoreRepository.findAllByOrderByScoreDesc(PageRequest.of(0, size)).stream()

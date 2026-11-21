@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { fetchTopScores, saveScore } from '../api.js';
+import { ApiError, fetchTopScores, saveScore } from '../api.js';
 import { RANKING_SIZE, STATUS } from '../game/constants.js';
 
 export const SAVE_STATUS = Object.freeze({
@@ -7,6 +7,7 @@ export const SAVE_STATUS = Object.freeze({
   SAVING: 'saving',
   SAVED: 'saved',
   FAILED: 'failed',
+  RATE_LIMITED: 'rate_limited',
 });
 
 export function useRanking(status, score, lines) {
@@ -45,7 +46,13 @@ export function useRanking(status, score, lines) {
         setSaveStatus(SAVE_STATUS.SAVED);
         refreshRanking();
       })
-      .catch(() => setSaveStatus(SAVE_STATUS.FAILED));
+      .catch((error) => {
+        if (error instanceof ApiError && error.status === 429) {
+          setSaveStatus(SAVE_STATUS.RATE_LIMITED);
+          return;
+        }
+        setSaveStatus(SAVE_STATUS.FAILED);
+      });
   }, [status, score, lines, refreshRanking]);
 
   return { ranking, rankingFailed, latestId, saveStatus };

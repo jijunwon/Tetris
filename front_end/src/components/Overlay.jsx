@@ -11,6 +11,7 @@ const SAVE_MESSAGE = {
   [SAVE_STATUS.SAVING]: '기록 저장 중…',
   [SAVE_STATUS.SAVED]: '랭킹에 기록했습니다',
   [SAVE_STATUS.FAILED]: '기록을 저장하지 못했습니다',
+  [SAVE_STATUS.RATE_LIMITED]: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.',
 };
 
 export default function Overlay({ status, saveStatus, onStart, onResume }) {
@@ -33,7 +34,9 @@ export default function Overlay({ status, saveStatus, onStart, onResume }) {
       {saveMessage && (
         <p
           className={
-            saveStatus === SAVE_STATUS.FAILED ? 'overlay__save overlay__save--failed' : 'overlay__save'
+            saveStatus === SAVE_STATUS.FAILED || saveStatus === SAVE_STATUS.RATE_LIMITED
+              ? 'overlay__save overlay__save--failed'
+              : 'overlay__save'
           }
         >
           {saveMessage}

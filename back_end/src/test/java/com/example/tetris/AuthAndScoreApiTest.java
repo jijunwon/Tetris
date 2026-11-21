@@ -141,6 +141,35 @@ class AuthAndScoreApiTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void savingScoreRefreshesCachedTopRanking() throws Exception {
+        signup("테트리스왕", "player", "secret").andExpect(status().isCreated());
+        MvcResult login = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(credentials("player", "secret")))
+                .andExpect(status().isOk())
+                .andReturn();
+        MockHttpSession session = (MockHttpSession) login.getRequest().getSession(false);
+
+        mockMvc.perform(post("/api/scores")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scoreJson(100, 1)))
+                .andExpect(status().isCreated());
+        mockMvc.perform(get("/api/scores/top"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].score").value(100));
+
+        mockMvc.perform(post("/api/scores")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scoreJson(999, 2)))
+                .andExpect(status().isCreated());
+        mockMvc.perform(get("/api/scores/top"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].score").value(999));
+    }
+
     private ResultActions signup(String nickname, String username, String password) throws Exception {
         String body = "{\"nickname\":\"" + nickname + "\",\"username\":\"" + username
                 + "\",\"password\":\"" + password + "\"}";

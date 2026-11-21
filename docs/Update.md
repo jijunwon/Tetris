@@ -1,4 +1,4 @@
-## 2026-11-04
+﻿## 2026-11-04
 
 ### 프로젝트 준비
 - 로드맵 정리 (`docs/TODO.md`), 단계별 브랜치 생성
@@ -112,3 +112,18 @@
 - 줄 삭제: `public/sounds/line-clear.mp3`를 지운 줄 수만큼 음높이를 달리해 겹쳐 '팡!'
 - 제목 줄 왼쪽 음표 버튼: 클릭하면 음소거, 마우스를 올리면 볼륨 바 (실선 + 원형 손잡이)
 - 설정 메뉴(톱니바퀴)에 음악·효과음 켜기/끄기, 설정은 브라우저에 저장
+
+## 2026-11-21
+
+### 7단계 — 측정 · 모니터링
+- k6 설치, `load-test/ranking-get.js`로 로컬 `GET /api/scores/top` 부하 테스트 (50 VU · 30초)
+- 기준 수치: 약 408 req/s, p95 약 18ms, 오류 0% (`load-test/results/baseline-ranking.md`)
+- CloudWatch 경보: SNS 주제 `tetris-alerts` + CPU ≥ 80% + StatusCheckFailed ≥ 1 (메일 알림)
+
+### 트래픽 관리 (`feature/traffic`)
+- 랭킹 조회 Spring Cache + Caffeine, 점수 저장 시 `@CacheEvict`로 캐시 비움
+- 프론트 429 안내: `api.js` / 로그인·가입 / 점수 저장 Overlay
+- Nginx (`deploy/nginx/`): gzip, `/assets/` 1년 캐시, `index.html` no-store, 로그인·가입·점수 저장 rate limit
+- EC2에 설정 복사 후 `nginx -t` · `reload` 적용 확인 (`cache-control: no-store`)
+- 캐시 적용 후 같은 k6: 약 472 req/s, p95 약 8ms (`load-test/results/comparison.md`)
+- 실습 종료: EC2 인스턴스 중지, 탄력적 IP 해제

@@ -21,6 +21,9 @@ async function request(path, { method = 'GET', body } = {}) {
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new ApiError(429, '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.');
+    }
     throw new ApiError(response.status, data?.message ?? '요청을 처리하지 못했습니다.');
   }
   return data;
